@@ -16,6 +16,7 @@
           aria-label="Navigation">
           <a href="#services">Services</a>
           <a href="#atelier">Atelier</a>
+          <a href="#rdv">RDV</a>
           <a href="#avis">Avis</a>
           <a href="#contact">Contact</a>
         </nav>
@@ -55,10 +56,16 @@
         v-if="page.reviews.length"
         :heading="page.reviewsHeading"
         :reviews="page.reviews" />
+      <AppointmentSection
+        :phone="page.phone"
+        :email="page.email"
+        :city="page.city"
+        :service-titles="page.services.map((service) => service.title)" />
       <FaqSection
         v-if="page.faq.length"
         :heading="page.faqHeading"
-        :items="page.faq" />
+        :items="page.faq"
+        :image="page.faqImage" />
       <ContactSection :page="page" />
     </main>
 
@@ -126,6 +133,7 @@ import AboutSection from './sections/AboutSection.vue'
 import GallerySection from './sections/GallerySection.vue'
 import ProcessSection from './sections/ProcessSection.vue'
 import ReviewsSection from './sections/ReviewsSection.vue'
+import AppointmentSection from './sections/AppointmentSection.vue'
 import FaqSection from './sections/FaqSection.vue'
 import ContactSection from './sections/ContactSection.vue'
 
@@ -256,9 +264,9 @@ useHead({
 }
 
 .pit-container {
-  max-width: 72rem;
+  max-width: 78rem;
   margin-inline: auto;
-  padding-inline: clamp(1.15rem, 4vw, 2.25rem);
+  padding-inline: clamp(1.15rem, 4vw, 2.5rem);
 }
 
 .pit-section {

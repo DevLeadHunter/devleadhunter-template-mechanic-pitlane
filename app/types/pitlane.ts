@@ -26,6 +26,7 @@ export interface PitlaneTrustItem {
 export interface PitlaneServiceItem {
   title: string
   description: string
+  image?: string
 }
 
 export interface PitlaneWhyItem {
@@ -89,6 +90,7 @@ export interface PitlanePageContent {
   reviews: PitlaneReviewItem[]
   faqHeading: string
   faq: PitlaneFaqItem[]
+  faqImage: string
   contactHeading: string
   openingHours: PitlaneHoursItem[]
   zones: string[]
@@ -143,20 +145,24 @@ const defaults = {
   whyHeading: 'Pourquoi nous choisir',
   whyItems: [
     {
-      title: 'Devis avant toute intervention',
-      description: 'Rien n’est lancé sans votre accord. Prix annoncé = prix facturé.',
+      title: 'Tarifs compétitifs',
+      description:
+        'Devis transparent avant réparation. Pas de surprise sur la facture — le prix annoncé est le prix payé.',
     },
     {
-      title: 'Explications claires',
-      description: 'On vous montre la pièce, on explique le pourquoi, sans jargon inutile.',
+      title: 'Service rapide & efficace',
+      description:
+        'Créneaux atelier organisés pour limiter l’immobilisation. On vous prévient dès que la voiture est prête.',
     },
     {
-      title: 'Délais tenus',
-      description: 'Une date de restitution annoncée — et respectée autant que possible.',
+      title: 'Techniciens expérimentés',
+      description:
+        'Diagnostic multi-marques, pièces de qualité et interventions dans les règles de l’art.',
     },
     {
-      title: 'Atelier local',
-      description: 'Un interlocuteur réel, pas un call-center. Vous parlez à l’atelier.',
+      title: 'Pièces & équipements de qualité',
+      description:
+        'On privilégie des pièces adaptées à votre véhicule, avec garantie, plutôt que le moins cher à tout prix.',
     },
   ] as PitlaneWhyItem[],
   aboutHeading: 'L’atelier',
@@ -243,7 +249,7 @@ export function buildPitlaneContent(content: SiteContent): PitlanePageContent {
       )
     : []
 
-  const services: PitlaneServiceItem[] =
+  const servicesRaw: PitlaneServiceItem[] =
     Array.isArray(content.services) && content.services.length > 0
       ? content.services
           .map((service): PitlaneServiceItem => ({
@@ -262,6 +268,13 @@ export function buildPitlaneContent(content: SiteContent): PitlanePageContent {
         .filter((item): boolean => item.url.length > 0)
         .slice(0, 8)
     : []
+
+  const services: PitlaneServiceItem[] = servicesRaw.map(
+    (service: PitlaneServiceItem, index: number): PitlaneServiceItem => ({
+      ...service,
+      image: gallery[index % Math.max(gallery.length, 1)]?.url || content.heroImage || '',
+    }),
+  )
 
   const reviews: PitlaneReviewItem[] = Array.isArray(content.reviews)
     ? content.reviews
@@ -338,6 +351,7 @@ export function buildPitlaneContent(content: SiteContent): PitlanePageContent {
     reviews,
     faqHeading: resolveText(content.faqHeading, defaults.faqHeading),
     faq,
+    faqImage: content.aboutImage || gallery[0]?.url || content.heroImage || '',
     contactHeading: resolveText(content.contactHeading, defaults.contactHeading),
     openingHours,
     zones,
