@@ -43,6 +43,7 @@
         :heading="page.aboutHeading"
         :text="page.about"
         :image="page.aboutImage"
+        :secondary-image="page.aboutSecondaryImage"
         :city="page.city"
         :cta-label="page.ctaQuoteLabel" />
       <GallerySection
@@ -66,38 +67,16 @@
         :heading="page.faqHeading"
         :items="page.faq"
         :image="page.faqImage" />
+      <MapSection
+        :business-name="page.businessName"
+        :city="page.city"
+        :area="page.area"
+        :phone="page.phone"
+        :email="page.email" />
       <ContactSection :page="page" />
     </main>
 
-    <footer class="pit-footer">
-      <div class="pit-container pit-footer__inner">
-        <div>
-          <p class="pit-footer__brand">{{ page.businessName }}</p>
-          <p
-            v-if="page.area || page.city"
-            class="pit-footer__meta">
-            <template v-if="page.area">{{ page.area }}</template>
-            <template v-if="page.area && page.city"> · </template>
-            <template v-if="page.city">{{ page.city }}</template>
-          </p>
-        </div>
-        <div class="pit-footer__actions">
-          <a
-            v-if="page.phone"
-            :href="`tel:${page.phone}`"
-            class="pit-footer__link"
-            >{{ page.phone }}</a
-          >
-          <a
-            v-if="page.email"
-            :href="`mailto:${page.email}`"
-            class="pit-footer__link"
-            >{{ page.email }}</a
-          >
-        </div>
-        <p class="pit-footer__copy">© {{ year }} — Tous droits réservés</p>
-      </div>
-    </footer>
+    <FooterSection :page="page" />
 
     <div
       v-if="page.phone"
@@ -135,7 +114,9 @@ import ProcessSection from './sections/ProcessSection.vue'
 import ReviewsSection from './sections/ReviewsSection.vue'
 import AppointmentSection from './sections/AppointmentSection.vue'
 import FaqSection from './sections/FaqSection.vue'
+import MapSection from './sections/MapSection.vue'
 import ContactSection from './sections/ContactSection.vue'
+import FooterSection from './sections/FooterSection.vue'
 
 const props = defineProps({
   content: {
@@ -147,13 +128,13 @@ const props = defineProps({
 const rootRef: Ref<HTMLElement | null> = ref(null)
 const isReady: Ref<boolean> = ref(false)
 const isClient: Ref<boolean> = ref(false)
-const year: number = new Date().getFullYear()
 
 const page: ComputedRef<PitlanePageContent> = computed((): PitlanePageContent =>
   buildPitlaneContent(props.content),
 )
 
 const themeVars: ComputedRef<Record<string, string>> = computed((): Record<string, string> => ({
+  // Couleur primaire prospect (logo / palette) — toute la DA suit `palette.primary`.
   '--pit-red': page.value.theme.primary,
   '--pit-bg': page.value.theme.secondary,
   '--pit-ink': page.value.theme.accent,
@@ -424,56 +405,6 @@ useHead({
   .pit-logo {
     max-width: none;
   }
-}
-
-/* Footer */
-.pit-footer {
-  border-top: 1px solid var(--pit-line);
-  background: color-mix(in srgb, var(--pit-bg) 70%, black);
-  padding: 2.4rem 0 2.8rem;
-}
-
-.pit-footer__inner {
-  display: grid;
-  gap: 1.25rem;
-}
-
-@media (min-width: 720px) {
-  .pit-footer__inner {
-    grid-template-columns: 1.4fr 1fr auto;
-    align-items: end;
-  }
-}
-
-.pit-footer__brand {
-  font-family: var(--pit-font-display);
-  font-weight: 700;
-  font-size: 1.25rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.pit-footer__meta,
-.pit-footer__copy {
-  margin-top: 0.35rem;
-  color: var(--pit-muted);
-  font-size: 0.9rem;
-}
-
-.pit-footer__actions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.pit-footer__link {
-  color: var(--pit-ink);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.pit-footer__link:hover {
-  color: var(--pit-red);
 }
 
 /* Mobile bar */

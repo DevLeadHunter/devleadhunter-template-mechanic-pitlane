@@ -9,7 +9,7 @@
         <p class="pit-eyebrow">Réserver</p>
         <h2 class="pit-heading">Formulaire de rendez-vous</h2>
         <p class="pit-lead pit-book__lead">
-          Décrivez votre véhicule et le besoin — on vous rappelle pour confirmer le créneau.
+          Indiquez vos coordonnées et votre véhicule — on vous rappelle pour confirmer.
         </p>
       </div>
 
@@ -79,7 +79,34 @@
 
         <div class="pit-book__block">
           <h3>Véhicule</h3>
-          <div class="pit-book__grid pit-book__grid--3">
+          <div class="pit-book__plate">
+            <label class="pit-book__plate-field">
+              <span>Immatriculation</span>
+              <input
+                v-model="form.plate"
+                type="text"
+                name="plate"
+                maxlength="12"
+                placeholder="AB-123-CD"
+                autocomplete="off"
+                @keydown.enter.prevent="lookupPlate" />
+            </label>
+            <button
+              type="button"
+              class="pit-btn pit-btn--red"
+              :disabled="plateLoading || !form.plate.trim()"
+              @click="lookupPlate">
+              {{ plateLoading ? 'Recherche…' : 'Identifier' }}
+            </button>
+          </div>
+          <p
+            v-if="plateMessage"
+            class="pit-book__plate-msg"
+            :class="{ 'is-error': plateError }">
+            {{ plateMessage }}
+          </p>
+
+          <div class="pit-book__grid">
             <label>
               <span>Marque</span>
               <input
@@ -106,6 +133,14 @@
                 name="year"
                 inputmode="numeric"
                 placeholder="2018" />
+            </label>
+            <label>
+              <span>Énergie</span>
+              <input
+                v-model="form.fuel"
+                type="text"
+                name="fuel"
+                placeholder="Essence, Diesel…" />
             </label>
           </div>
         </div>
@@ -136,7 +171,7 @@
           <p
             v-if="phone"
             class="pit-book__hint">
-            Ou appelez directement
+            Ou appelez
             <a :href="`tel:${phone}`">{{ phone }}</a>
           </p>
         </div>
@@ -146,7 +181,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Ref } from 'vue'
+import type { ComputedRef, PropType, Ref } from 'vue'
 
 const props = defineProps({
   phone: {
@@ -162,12 +197,12 @@ const props = defineProps({
     default: '',
   },
   serviceTitles: {
-    type: Array as () => string[],
+    type: Array as PropType<string[]>,
     default: (): string[] => [],
   },
 })
 
-const serviceOptions: Ref<string[]> = computed((): string[] => {
+const serviceOptions: ComputedRef<string[]> = computed((): string[] => {
   if (props.serviceTitles.length) {
     return props.serviceTitles.slice(0, 6)
   }
@@ -181,16 +216,89 @@ const form = reactive({
   date: '',
   slot: '',
   location: '',
+  plate: '',
   make: '',
   model: '',
   year: '',
+  fuel: '',
   services: [] as string[],
 })
 
 const submitted: Ref<boolean> = ref(false)
+const plateLoading: Ref<boolean> = ref(false)
+const plateMessage: Ref<string> = ref('')
+const plateError: Ref<boolean> = ref(false)
 
 /**
- * Ouvre un mailto prérempli vers le garage (pas de backend dans la template).
+ * Normalise une plaque FR (AA-123-AA ou 1234-AA-12).
+ * @param value Saisie brute
+ * @returns Plaque nettoyée
+ */
+function cleanPlate(value: string): string {
+  return value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()
+}
+
+/**
+ * Interroge une API publique d’immatriculation ; fallback saisie manuelle.
+ * @returns void
+ */
+async function lookupPlate(): Promise<void> {
+  const plate: string = cleanPlate(form.plate)
+  if (plate.length < 5) {
+    plateError.value = true
+    plateMessage.value = 'Indiquez une immatriculation valide (ex. AB-123-CD).'
+    return
+  }
+
+  plateLoading.value = true
+  plateError.value = false
+  plateMessage.value = ''
+
+  try {
+    // API publique (cors-friendly via proxy) — utilisée pour préremplir marque/modèle/année.
+    const endpoint: string = `https://api.allorigins.win/raw?url=${encodeURIComponent(
+      `https://api.apiplaqueimmatriculation.fr/get-vehicule?immatriculation=${plate}`,
+    )}`
+    const response: Response = await fetch(endpoint, { signal: AbortSignal.timeout(8000) })
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`)
+    }
+    const data: Record<string, unknown> = (await response.json()) as Record<string, unknown>
+    const make: string = String(data.marque ?? data.brand ?? data.make ?? '').trim()
+    const model: string = String(data.modele ?? data.model ?? '').trim()
+    const year: string = String(data.annee ?? data.year ?? data.date_mise_en_circulation ?? '')
+      .slice(0, 4)
+      .trim()
+    const fuel: string = String(data.energie ?? data.fuel ?? '').trim()
+
+    if (!make && !model) {
+      throw new Error('empty')
+    }
+
+    if (make) {
+      form.make = make
+    }
+    if (model) {
+      form.model = model
+    }
+    if (year) {
+      form.year = year
+    }
+    if (fuel) {
+      form.fuel = fuel
+    }
+    plateMessage.value = 'Véhicule identifié — vérifiez les infos avant d’envoyer.'
+  } catch {
+    plateError.value = true
+    plateMessage.value =
+      'Identification automatique indisponible pour le moment. Complétez marque et modèle à la main.'
+  } finally {
+    plateLoading.value = false
+  }
+}
+
+/**
+ * Ouvre un mailto prérempli vers le garage.
  * @returns void
  */
 function onSubmit(): void {
@@ -201,7 +309,8 @@ function onSubmit(): void {
     form.date ? `Date souhaitée : ${form.date}` : '',
     form.slot ? `Créneau : ${form.slot}` : '',
     form.location ? `Lieu : ${form.location}` : '',
-    `Véhicule : ${form.make} ${form.model} ${form.year}`.trim(),
+    form.plate ? `Immatriculation : ${form.plate}` : '',
+    `Véhicule : ${form.make} ${form.model} ${form.year} ${form.fuel}`.trim(),
     form.services.length ? `Prestations : ${form.services.join(', ')}` : '',
   ].filter((line: string): boolean => line.length > 0)
 
@@ -245,48 +354,40 @@ function onSubmit(): void {
 
 .pit-book__form {
   width: 100%;
-  max-width: 64rem;
+  max-width: 52rem;
   margin-inline: auto;
-  padding: clamp(1.4rem, 3.5vw, 2.4rem);
-  background: #f7f7f8;
+  padding: clamp(1.5rem, 3.5vw, 2.5rem);
+  background: #fff;
   color: #151518;
-  border-radius: 0.55rem;
+  border-radius: 0.65rem;
   box-shadow: 0 30px 80px -40px color-mix(in srgb, var(--pit-red) 55%, transparent);
 }
 
 .pit-book__block + .pit-book__block {
-  margin-top: 1.6rem;
-  padding-top: 1.4rem;
-  border-top: 1px solid color-mix(in srgb, #151518 10%, transparent);
+  margin-top: 1.5rem;
+  padding-top: 1.35rem;
+  border-top: 1px solid #ececef;
 }
 
 .pit-book__block h3 {
   font-family: var(--pit-font-display);
   font-weight: 700;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   margin-bottom: 1rem;
+  color: #18181b;
 }
 
 .pit-book__grid {
   display: grid;
-  gap: 0.85rem;
-}
-
-@media (min-width: 720px) {
-  .pit-book__grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-.pit-book__grid--3 {
+  gap: 0.9rem;
   grid-template-columns: 1fr;
 }
 
-@media (min-width: 720px) {
-  .pit-book__grid--3 {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+@media (min-width: 700px) {
+  .pit-book__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -304,10 +405,10 @@ function onSubmit(): void {
 .pit-book__form input,
 .pit-book__form select {
   width: 100%;
-  padding: 0.85rem 0.95rem;
+  padding: 0.9rem 1rem;
   border: 1px solid #e4e4e7;
-  border-radius: 0.35rem;
-  background: #fff;
+  border-radius: 0.4rem;
+  background: #fafafa;
   color: #151518;
   font: inherit;
 }
@@ -317,12 +418,41 @@ function onSubmit(): void {
   outline: 2px solid var(--pit-red);
   outline-offset: 1px;
   border-color: transparent;
+  background: #fff;
+}
+
+.pit-book__plate {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 700px) {
+  .pit-book__plate {
+    grid-template-columns: 1fr auto;
+    align-items: end;
+  }
+}
+
+.pit-book__plate-field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.pit-book__plate-msg {
+  margin: -0.35rem 0 1rem;
+  font-size: 0.9rem;
+  color: #3f3f46;
+}
+
+.pit-book__plate-msg.is-error {
+  color: #b42318;
 }
 
 .pit-book__checks {
   display: grid;
   gap: 0.65rem 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
 }
 
 .pit-check {

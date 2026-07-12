@@ -33,18 +33,19 @@ export const mockSiteContent: SiteContent = {
   ctaCallLabel: 'Appeler le garage',
   ctaQuoteLabel: 'Demander un RDV',
   trustItems: [
-    { value: '4,3/5', label: 'Note clients' },
-    { value: '120+', label: 'Avis recensés' },
+    { value: '19+', label: 'Ans d’expérience' },
+    { value: '120+', label: 'Avis clients' },
+    { value: '4,3/5', label: 'Note moyenne' },
     { value: 'AD', label: 'Réseau Expert' },
-    { value: '19 ans', label: 'D’expérience locale' },
   ],
   servicesHeading: 'Réparations & entretien',
   galleryHeading: 'Le garage en images',
   reviewsHeading: 'Ce que disent les clients',
   faqHeading: 'Avant de déposer votre voiture',
-  aboutHeading: 'Votre garage à Rennes',
+  aboutHeading: 'Notre réputation parle pour nous',
   contactHeading: 'Prendre rendez-vous',
-  heroImage: landry.hero,
+  // Photo atelier (plus cohérente que le slider commercial) pour le hero
+  heroImage: landry.parallax,
   aboutImage: landry.about,
   palette: {
     primary: '#E11D2E',
@@ -90,12 +91,12 @@ export const mockSiteContent: SiteContent = {
     },
   ],
   gallery: [
-    { url: landry.hero, alt: 'Façade et accueil Automobiles du Landry à Rennes' },
     { url: landry.service1, alt: 'Atelier mécanique — révision véhicule' },
     { url: landry.service2, alt: 'Intervention carrosserie' },
     { url: landry.service3, alt: 'Prestations entretien automobile' },
     { url: landry.parallax, alt: 'Espace atelier du garage' },
     { url: landry.atelier, alt: 'Centre automobile du Landry' },
+    { url: landry.about, alt: 'Accueil Automobiles du Landry' },
   ],
   reviews: [
     {

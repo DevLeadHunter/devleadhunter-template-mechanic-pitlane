@@ -73,6 +73,7 @@ export interface PitlanePageContent {
   about: string
   heroImage: string
   aboutImage: string
+  aboutSecondaryImage: string
   heroPoints: string[]
   ctaCallLabel: string
   ctaQuoteLabel: string
@@ -334,6 +335,8 @@ export function buildPitlaneContent(content: SiteContent): PitlanePageContent {
     about: content.about ?? '',
     heroImage: content.heroImage ?? '',
     aboutImage: content.aboutImage ?? '',
+    aboutSecondaryImage:
+      gallery[1]?.url || gallery[0]?.url || content.heroImage || content.aboutImage || '',
     heroPoints: heroPointsFromContent.length ? heroPointsFromContent : [...defaults.heroPoints],
     ctaCallLabel: resolveText(content.ctaCallLabel, defaults.ctaCallLabel),
     ctaQuoteLabel: resolveText(content.ctaQuoteLabel, defaults.ctaQuoteLabel),

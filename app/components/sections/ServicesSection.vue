@@ -6,20 +6,20 @@
       <div
         class="pit-services__head"
         data-pit-reveal>
-        <div>
+        <div class="pit-services__titles">
           <p class="pit-eyebrow">Ce que nous proposons</p>
           <h2 class="pit-heading">{{ heading }}</h2>
         </div>
         <a
           href="#rdv"
-          class="pit-services__more"
+          class="pit-btn pit-btn--red"
           >Prendre rendez-vous</a
         >
       </div>
 
       <div class="pit-services__rail">
         <article
-          v-for="(service, index) in services"
+          v-for="(service, index) in visibleServices"
           :key="service.title"
           class="pit-service"
           data-pit-reveal
@@ -35,10 +35,10 @@
               class="pit-service__fallback"
               aria-hidden="true"></div>
             <div class="pit-service__shade"></div>
-          </div>
-          <div class="pit-service__label">
-            <span>{{ String(index + 1).padStart(2, '0') }}</span>
-            <h3>{{ service.title }}</h3>
+            <div class="pit-service__label">
+              <span>{{ String(index + 1).padStart(2, '0') }}</span>
+              <h3>{{ service.title }}</h3>
+            </div>
           </div>
           <p class="pit-service__text">{{ service.description }}</p>
         </article>
@@ -48,10 +48,10 @@
 </template>
 
 <script lang="ts" setup>
-import type { PropType } from 'vue'
+import type { ComputedRef, PropType } from 'vue'
 import type { PitlaneServiceItem } from '~/types/pitlane'
 
-defineProps({
+const props = defineProps({
   heading: {
     type: String,
     required: true,
@@ -61,6 +61,10 @@ defineProps({
     required: true,
   },
 })
+
+const visibleServices: ComputedRef<PitlaneServiceItem[]> = computed((): PitlaneServiceItem[] =>
+  props.services.slice(0, 6),
+)
 </script>
 
 <style scoped>
@@ -70,38 +74,47 @@ defineProps({
   align-items: end;
   justify-content: space-between;
   gap: 1.25rem 2rem;
-  margin-bottom: 2.2rem;
+  margin-bottom: 2.4rem;
 }
 
-.pit-services__head .pit-heading {
-  max-width: 18ch;
+.pit-services__titles {
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
-.pit-services__more {
-  font-family: var(--pit-font-display);
-  font-weight: 700;
-  font-size: 0.95rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--pit-ink);
-  text-decoration: none;
-  border-bottom: 2px solid var(--pit-red);
-  padding-bottom: 0.25rem;
+.pit-services__titles .pit-heading {
+  margin-top: 0.7rem;
+  white-space: nowrap;
+  font-size: clamp(1.85rem, 3.4vw, 2.75rem);
 }
 
-.pit-services__more:hover {
-  color: var(--pit-red);
+@media (max-width: 540px) {
+  .pit-services__titles .pit-heading {
+    white-space: normal;
+  }
 }
 
 .pit-services__rail {
   display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16.5rem), 1fr));
+  gap: 1.25rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 700px) {
+  .pit-services__rail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .pit-services__rail {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .pit-service {
-  display: grid;
-  grid-template-rows: auto auto 1fr;
+  display: flex;
+  flex-direction: column;
   background: var(--pit-card);
   border: 1px solid var(--pit-line);
   overflow: hidden;
@@ -114,7 +127,7 @@ defineProps({
 
 .pit-service__media {
   position: relative;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 4 / 5;
   overflow: hidden;
   background: #111;
 }
@@ -124,27 +137,19 @@ defineProps({
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: grayscale(1) contrast(1.08);
+  filter: grayscale(1) contrast(1.1);
   transition:
     transform 0.45s ease,
     filter 0.35s ease;
 }
 
 .pit-service__fallback {
-  background:
-    linear-gradient(145deg, #2a2a2e, #121214),
-    repeating-linear-gradient(
-      -45deg,
-      transparent,
-      transparent 8px,
-      color-mix(in srgb, var(--pit-red) 18%, transparent) 8px,
-      color-mix(in srgb, var(--pit-red) 18%, transparent) 9px
-    );
+  background: linear-gradient(145deg, #2a2a2e, #121214);
 }
 
 .pit-service:hover .pit-service__media img {
-  transform: scale(1.06);
-  filter: grayscale(0.35) contrast(1.05);
+  transform: scale(1.05);
+  filter: grayscale(0.2) contrast(1.05);
 }
 
 .pit-service__shade {
@@ -152,16 +157,17 @@ defineProps({
   inset: 0;
   background: linear-gradient(
     0deg,
-    color-mix(in srgb, var(--pit-bg) 88%, transparent) 0%,
-    transparent 55%
+    color-mix(in srgb, var(--pit-bg) 92%, transparent) 0%,
+    transparent 50%
   );
 }
 
 .pit-service__label {
-  position: relative;
-  margin-top: -4.2rem;
+  position: absolute;
+  left: 1.1rem;
+  right: 1.1rem;
+  bottom: 1.1rem;
   z-index: 1;
-  padding: 0 1.1rem;
   color: #fff;
 }
 
@@ -175,19 +181,20 @@ defineProps({
 }
 
 .pit-service__label h3 {
-  margin-top: 0.25rem;
+  margin-top: 0.3rem;
   font-family: var(--pit-font-display);
   font-weight: 700;
-  font-size: 1.45rem;
+  font-size: clamp(1.25rem, 2vw, 1.55rem);
   letter-spacing: 0.02em;
   text-transform: uppercase;
   line-height: 1.1;
 }
 
 .pit-service__text {
-  padding: 0.95rem 1.1rem 1.25rem;
+  padding: 1.05rem 1.15rem 1.3rem;
   color: var(--pit-muted);
   line-height: 1.55;
   font-size: 0.95rem;
+  flex: 1;
 }
 </style>

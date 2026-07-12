@@ -15,10 +15,7 @@
           :style="{ '--pit-delay': '80ms' }">
           Votre garage
           <span class="pit-hero__accent">de confiance</span>
-          <template v-if="page.city">
-            à
-            {{ page.city }}
-          </template>
+          <template v-if="page.city"> à {{ page.city }}</template>
         </h1>
 
         <p
@@ -36,7 +33,13 @@
           <li
             v-for="point in page.heroPoints"
             :key="point">
-            <span aria-hidden="true"></span>
+            <svg
+              viewBox="0 0 20 20"
+              aria-hidden="true">
+              <path
+                d="M7.5 13.2 3.8 9.5l-1.3 1.3L7.5 15.8l10-10-1.3-1.3z"
+                fill="currentColor" />
+            </svg>
             {{ point }}
           </li>
         </ul>
@@ -66,11 +69,35 @@
         <img
           v-if="page.heroImage"
           :src="page.heroImage"
-          :alt="page.businessName || 'Garage'"
+          :alt="`Atelier ${page.businessName || 'garage'}`"
           class="pit-hero__img" />
         <div
-          class="pit-hero__frame"
-          aria-hidden="true"></div>
+          class="pit-hero__disc"
+          aria-hidden="true">
+          <svg
+            viewBox="0 0 120 120"
+            fill="none">
+            <circle
+              cx="60"
+              cy="60"
+              r="56"
+              stroke="currentColor"
+              stroke-width="3" />
+            <circle
+              cx="60"
+              cy="60"
+              r="18"
+              stroke="currentColor"
+              stroke-width="8" />
+            <circle
+              cx="60"
+              cy="60"
+              r="36"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-dasharray="4 6" />
+          </svg>
+        </div>
       </div>
     </div>
     <div
@@ -102,19 +129,14 @@ defineProps({
   display: grid;
   gap: 2.5rem;
   align-items: center;
-  min-height: min(78vh, 44rem);
+  min-height: min(72vh, 40rem);
 }
 
 @media (min-width: 960px) {
   .pit-hero__grid {
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-    gap: clamp(2rem, 5vw, 4rem);
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: clamp(2.5rem, 6vw, 5rem);
   }
-}
-
-.pit-hero__copy {
-  max-width: none;
-  width: 100%;
 }
 
 .pit-hero__ribbon {
@@ -130,7 +152,7 @@ defineProps({
   transform: skewX(-8deg);
 }
 
-.pit-hero__ribbon > * {
+.pit-hero__ribbon span {
   display: inline-block;
   transform: skewX(8deg);
 }
@@ -139,12 +161,12 @@ defineProps({
   margin-top: 1.35rem;
   font-family: var(--pit-font-display);
   font-weight: 800;
-  font-size: clamp(3rem, 7.5vw, 5.4rem);
-  line-height: 0.95;
+  font-size: clamp(2.8rem, 6.5vw, 4.8rem);
+  line-height: 0.98;
   letter-spacing: 0.01em;
   text-transform: uppercase;
   text-wrap: balance;
-  max-width: 14ch;
+  max-width: 16ch;
 }
 
 .pit-hero__accent {
@@ -154,47 +176,37 @@ defineProps({
 .pit-hero__lead {
   margin-top: 1.35rem;
   color: color-mix(in srgb, var(--pit-ink) 78%, transparent);
-  font-size: clamp(1.05rem, 2vw, 1.2rem);
+  font-size: clamp(1.05rem, 2vw, 1.18rem);
   line-height: 1.7;
-  max-width: 38rem;
+  max-width: 36rem;
 }
 
 .pit-hero__points {
-  display: grid;
-  gap: 0.65rem;
-  margin: 1.6rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.75rem;
+  margin: 1.75rem 0 0;
   padding: 0;
   list-style: none;
 }
 
-@media (min-width: 640px) {
-  .pit-hero__points {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.85rem;
-  }
-}
-
 .pit-hero__points li {
-  display: flex;
-  align-items: flex-start;
+  display: inline-flex;
+  align-items: center;
   gap: 0.55rem;
-  padding: 0.85rem 0.95rem;
-  border: 1px solid var(--pit-line);
-  background: color-mix(in srgb, var(--pit-surface) 80%, transparent);
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-sans);
   font-weight: 600;
-  font-size: 0.92rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  line-height: 1.3;
+  font-size: 0.98rem;
+  line-height: 1.35;
+  color: var(--pit-ink);
+  white-space: nowrap;
 }
 
-.pit-hero__points span {
+.pit-hero__points svg {
   flex: none;
-  width: 0.55rem;
-  height: 0.55rem;
-  margin-top: 0.28rem;
-  background: var(--pit-red);
+  width: 1.15rem;
+  height: 1.15rem;
+  color: var(--pit-red);
 }
 
 .pit-hero__actions {
@@ -206,12 +218,12 @@ defineProps({
 
 .pit-hero__media {
   position: relative;
-  min-height: 22rem;
+  min-height: 20rem;
 }
 
 @media (min-width: 960px) {
   .pit-hero__media {
-    min-height: 34rem;
+    min-height: 32rem;
     height: 100%;
   }
 }
@@ -223,16 +235,19 @@ defineProps({
   height: 100%;
   min-height: inherit;
   object-fit: cover;
-  border-radius: 0.35rem;
-  filter: saturate(0.92) contrast(1.05);
+  object-position: center;
+  border-radius: 0.45rem;
+  filter: grayscale(0.25) contrast(1.05);
 }
 
-.pit-hero__frame {
+.pit-hero__disc {
   position: absolute;
-  inset: 1.1rem -0.85rem -0.85rem 1.1rem;
-  border: 2px solid var(--pit-red);
-  border-radius: 0.35rem;
   z-index: 0;
+  right: -1.5rem;
+  bottom: -1.5rem;
+  width: min(42%, 11rem);
+  color: var(--pit-red);
+  opacity: 0.85;
   pointer-events: none;
 }
 
@@ -240,5 +255,12 @@ defineProps({
   margin-top: clamp(2rem, 5vw, 3.5rem);
   height: 3px;
   background: linear-gradient(90deg, var(--pit-red), transparent 72%);
+}
+
+@media (max-width: 639px) {
+  .pit-hero__points li {
+    white-space: normal;
+    width: 100%;
+  }
 }
 </style>
