@@ -10,15 +10,11 @@ const currentDir: string = dirname(fileURLToPath(import.meta.url))
 // about the tunnel (Storyblok, PostHog, slugs, DB) — it renders a typed `SiteContent`.
 export default defineNuxtConfig({
   $meta: {
-    name: 'devleadhunter-website-template-starter',
+    name: 'mechanic-pitlane',
   },
 
   compatibilityDate: '2025-07-15',
   devtools: { enabled: false },
-
-  // NOTE: no `modules` here. `@nuxt/eslint` is a dev-only tool and lives in
-  // `.playground/nuxt.config.ts` — declaring it in the layer would force every consumer
-  // (demo-host) to install it too. A consumed layer must only carry what renders it.
 
   components: [
     {
