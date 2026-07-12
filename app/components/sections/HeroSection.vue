@@ -161,12 +161,20 @@ defineProps({
   margin-top: 1.35rem;
   font-family: var(--pit-font-display);
   font-weight: 800;
-  font-size: clamp(2.8rem, 6.5vw, 4.8rem);
-  line-height: 0.98;
+  font-size: clamp(2rem, 4.2vw, 3.35rem);
+  line-height: 1.12;
   letter-spacing: 0.01em;
   text-transform: uppercase;
   text-wrap: balance;
-  max-width: 16ch;
+  max-width: 18ch;
+}
+
+@media (max-width: 639px) {
+  .pit-hero__title {
+    font-size: clamp(1.7rem, 7.2vw, 2.15rem);
+    line-height: 1.2;
+    max-width: none;
+  }
 }
 
 .pit-hero__accent {

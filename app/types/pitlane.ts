@@ -271,10 +271,13 @@ export function buildPitlaneContent(content: SiteContent): PitlanePageContent {
     : []
 
   const services: PitlaneServiceItem[] = servicesRaw.map(
-    (service: PitlaneServiceItem, index: number): PitlaneServiceItem => ({
-      ...service,
-      image: gallery[index % Math.max(gallery.length, 1)]?.url || content.heroImage || '',
-    }),
+    (service: PitlaneServiceItem, index: number): PitlaneServiceItem => {
+      const fromGallery = gallery.length > 0 ? gallery[index % gallery.length]?.url : ''
+      return {
+        ...service,
+        image: fromGallery || content.heroImage || content.aboutImage || '',
+      }
+    },
   )
 
   const reviews: PitlaneReviewItem[] = Array.isArray(content.reviews)

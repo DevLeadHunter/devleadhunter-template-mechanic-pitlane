@@ -26,10 +26,12 @@
           :style="{ '--pit-delay': `${index * 60}ms` }">
           <div class="pit-service__media">
             <img
-              v-if="service.image"
+              v-if="service.image && !broken.has(index)"
               :src="service.image"
               :alt="service.title"
-              loading="lazy" />
+              loading="lazy"
+              referrerpolicy="no-referrer"
+              @error="onBroken(index)" />
             <div
               v-else
               class="pit-service__fallback"
@@ -48,7 +50,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { ComputedRef, PropType } from 'vue'
+import type { ComputedRef, PropType, Ref } from 'vue'
 import type { PitlaneServiceItem } from '~/types/pitlane'
 
 const props = defineProps({
@@ -62,9 +64,21 @@ const props = defineProps({
   },
 })
 
+const broken: Ref<Set<number>> = ref(new Set())
+
 const visibleServices: ComputedRef<PitlaneServiceItem[]> = computed((): PitlaneServiceItem[] =>
   props.services.slice(0, 6),
 )
+
+/**
+ * Masque une image service cassée (évite le carré blanc).
+ * @param index Index carte
+ */
+function onBroken(index: number): void {
+  const next: Set<number> = new Set(broken.value)
+  next.add(index)
+  broken.value = next
+}
 </script>
 
 <style scoped>
@@ -117,6 +131,7 @@ const visibleServices: ComputedRef<PitlaneServiceItem[]> = computed((): PitlaneS
   flex-direction: column;
   background: var(--pit-card);
   border: 1px solid var(--pit-line);
+  border-radius: 0.85rem;
   overflow: hidden;
   transition: transform 0.25s ease;
 }

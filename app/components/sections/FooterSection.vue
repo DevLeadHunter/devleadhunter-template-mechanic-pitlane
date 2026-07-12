@@ -30,7 +30,7 @@
           <li><a href="#avis">Avis</a></li>
           <li><a href="#rdv">Rendez-vous</a></li>
           <li><a href="#faq">FAQ</a></li>
-          <li><a href="#localisation">Localisation</a></li>
+          <li><a href="#localisation">Nous trouver</a></li>
         </ul>
       </div>
 

@@ -2,7 +2,7 @@
   <div
     ref="rootRef"
     class="pit"
-    :class="{ 'pit--ready': isReady, 'pit--js': isClient }"
+    :class="{ 'pit--ready': isReady, 'pit--js': isClient, 'pit--mobile-bar': showMobileBar }"
     :style="themeVars">
     <header class="pit-header">
       <div class="pit-container pit-header__inner">
@@ -18,7 +18,7 @@
           <a href="#atelier">Atelier</a>
           <a href="#rdv">RDV</a>
           <a href="#avis">Avis</a>
-          <a href="#contact">Contact</a>
+          <a href="#localisation">Nous trouver</a>
         </nav>
         <a
           v-if="page.phone"
@@ -73,22 +73,25 @@
         :area="page.area"
         :phone="page.phone"
         :email="page.email" />
-      <ContactSection :page="page" />
     </main>
 
     <FooterSection :page="page" />
 
     <div
       v-if="page.phone"
-      class="pit-mobile-bar">
+      class="pit-mobile-bar"
+      :class="{ 'is-visible': showMobileBar }"
+      :aria-hidden="showMobileBar ? 'false' : 'true'">
       <a
         :href="`tel:${page.phone}`"
         class="pit-btn pit-btn--red pit-mobile-bar__btn"
+        :tabindex="showMobileBar ? 0 : -1"
         >{{ page.ctaCallLabel }}</a
       >
       <a
-        href="#contact"
+        href="#rdv"
         class="pit-btn pit-btn--ghost pit-mobile-bar__btn"
+        :tabindex="showMobileBar ? 0 : -1"
         >{{ page.ctaQuoteLabel }}</a
       >
     </div>
@@ -115,7 +118,6 @@ import ReviewsSection from './sections/ReviewsSection.vue'
 import AppointmentSection from './sections/AppointmentSection.vue'
 import FaqSection from './sections/FaqSection.vue'
 import MapSection from './sections/MapSection.vue'
-import ContactSection from './sections/ContactSection.vue'
 import FooterSection from './sections/FooterSection.vue'
 
 const props = defineProps({
@@ -128,6 +130,8 @@ const props = defineProps({
 const rootRef: Ref<HTMLElement | null> = ref(null)
 const isReady: Ref<boolean> = ref(false)
 const isClient: Ref<boolean> = ref(false)
+/** Barre fixe mobile : visible seulement quand les CTA hero ont quitté l’écran. */
+const showMobileBar: Ref<boolean> = ref(false)
 
 const page: ComputedRef<PitlanePageContent> = computed((): PitlanePageContent =>
   buildPitlaneContent(props.content),
@@ -141,6 +145,7 @@ const themeVars: ComputedRef<Record<string, string>> = computed((): Record<strin
 }))
 
 let revealObserver: IntersectionObserver | null = null
+let heroCtaObserver: IntersectionObserver | null = null
 
 /**
  * Observe les éléments `[data-pit-reveal]` non encore révélés.
@@ -155,6 +160,28 @@ function observeReveals(): void {
     .forEach((el: HTMLElement): void => {
       revealObserver?.observe(el)
     })
+}
+
+/** Observe les CTA du hero pour afficher la barre mobile hors viewport. */
+function observeHeroCtas(): void {
+  if (!rootRef.value || typeof IntersectionObserver === 'undefined') {
+    return
+  }
+  heroCtaObserver?.disconnect()
+  const actions: HTMLElement | null = rootRef.value.querySelector('.pit-hero__actions')
+  if (!actions) {
+    showMobileBar.value = true
+    return
+  }
+  heroCtaObserver = new IntersectionObserver(
+    (entries: IntersectionObserverEntry[]): void => {
+      const entry = entries[0]
+      if (!entry) return
+      showMobileBar.value = !entry.isIntersecting
+    },
+    { threshold: 0, rootMargin: '0px 0px 0px 0px' },
+  )
+  heroCtaObserver.observe(actions)
 }
 
 onMounted((): void => {
@@ -182,15 +209,18 @@ onMounted((): void => {
     { threshold: 0.12, rootMargin: '0px 0px -6% 0px' },
   )
   observeReveals()
+  observeHeroCtas()
 })
 
 watch(page, async (): Promise<void> => {
   await nextTick()
   observeReveals()
+  observeHeroCtas()
 })
 
 onUnmounted((): void => {
   revealObserver?.disconnect()
+  heroCtaObserver?.disconnect()
 })
 
 useHead({
@@ -199,7 +229,7 @@ useHead({
     { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
     {
       rel: 'stylesheet',
-      href: 'https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap',
+      href: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap',
     },
   ],
 })
@@ -212,8 +242,8 @@ useHead({
   --pit-muted: #a1a1aa;
   --pit-line: color-mix(in srgb, var(--pit-ink) 12%, transparent);
   --pit-red-glow: color-mix(in srgb, var(--pit-red) 45%, transparent);
-  --pit-font-display: 'Barlow Condensed', 'Barlow', sans-serif;
-  --pit-font-sans: 'Barlow', sans-serif;
+  --pit-font-display: 'Montserrat', sans-serif;
+  --pit-font-sans: 'Montserrat', sans-serif;
 
   position: relative;
   min-height: 100dvh;
@@ -221,7 +251,13 @@ useHead({
   color: var(--pit-ink);
   font-family: var(--pit-font-sans);
   overflow-x: clip;
-  padding-bottom: 5.5rem;
+  padding-bottom: 0;
+}
+
+@media (max-width: 639px) {
+  .pit.pit--mobile-bar {
+    padding-bottom: 5.5rem;
+  }
 }
 
 @media (min-width: 640px) {
@@ -251,7 +287,7 @@ useHead({
 }
 
 .pit-section {
-  padding-block: clamp(3.5rem, 8vw, 5.75rem);
+  padding-block: clamp(5rem, 11vw, 7.5rem);
 }
 
 .pit-eyebrow {
@@ -316,7 +352,7 @@ useHead({
 .pit-btn--red {
   background: var(--pit-red);
   color: #fff;
-  box-shadow: 0 14px 36px -16px var(--pit-red-glow);
+  box-shadow: none;
 }
 
 .pit-btn--red:hover {
@@ -356,27 +392,28 @@ useHead({
 .pit-logo {
   font-family: var(--pit-font-display);
   font-weight: 800;
-  font-size: 1.35rem;
-  letter-spacing: 0.04em;
+  font-size: clamp(0.78rem, 3.4vw, 1.05rem);
+  letter-spacing: 0.03em;
   text-transform: uppercase;
   text-decoration: none;
   color: var(--pit-ink);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 42vw;
+  max-width: min(62vw, 14rem);
+  line-height: 1.25;
 }
 
 .pit-nav {
   display: none;
-  gap: 1.35rem;
+  gap: 1.1rem;
 }
 
 .pit-nav a {
   font-family: var(--pit-font-display);
   font-weight: 600;
-  font-size: 0.95rem;
-  letter-spacing: 0.06em;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   text-decoration: none;
   color: var(--pit-muted);
@@ -390,7 +427,7 @@ useHead({
 .pit-header__cta {
   display: none;
   padding: 0.55rem 1rem;
-  font-size: 0.85rem;
+  font-size: 0.78rem;
 }
 
 @media (min-width: 768px) {
@@ -404,10 +441,11 @@ useHead({
 
   .pit-logo {
     max-width: none;
+    font-size: 1.05rem;
   }
 }
 
-/* Mobile bar */
+/* Mobile bar — masquée tant que les CTA hero sont visibles */
 .pit-mobile-bar {
   position: fixed;
   inset-inline: 0;
@@ -420,17 +458,35 @@ useHead({
   background: color-mix(in srgb, var(--pit-bg) 92%, transparent);
   backdrop-filter: blur(12px);
   border-top: 1px solid var(--pit-line);
+  transform: translateY(110%);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.28s ease,
+    opacity 0.28s ease;
+}
+
+.pit-mobile-bar.is-visible {
+  transform: none;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .pit-mobile-bar__btn {
   width: 100%;
   padding: 0.8rem 0.6rem;
-  font-size: 0.82rem;
+  font-size: 0.72rem;
 }
 
 @media (min-width: 640px) {
   .pit-mobile-bar {
     display: none;
+  }
+}
+
+@media (max-width: 899px) {
+  .pit-heading {
+    text-align: left;
   }
 }
 

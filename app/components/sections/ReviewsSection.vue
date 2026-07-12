@@ -60,7 +60,7 @@ defineProps({
 })
 
 /**
- * @param name Nom affiché
+ * @param name Nom
  * @returns Initiales
  */
 function initials(name: string): string {
@@ -75,13 +75,14 @@ function initials(name: string): string {
 
 <style scoped>
 .pit-reviews {
-  background: var(--pit-bg);
+  background: #0c0c0d;
+  padding-top: clamp(5.5rem, 12vw, 8.5rem);
+  padding-bottom: clamp(2.5rem, 5vw, 3.5rem);
 }
 
 .pit-reviews__head {
-  text-align: center;
-  max-width: 36rem;
-  margin: 0 auto 2.4rem;
+  text-align: left;
+  margin-bottom: 2.2rem;
 }
 
 .pit-reviews__head .pit-heading {
@@ -100,11 +101,11 @@ function initials(name: string): string {
 }
 
 .pit-review {
-  padding: 1.6rem 1.5rem 1.7rem;
-  background: #fff;
-  color: #151518;
-  border-radius: 0.45rem;
-  box-shadow: 0 18px 40px -28px rgba(0, 0, 0, 0.55);
+  padding: 1.5rem 1.4rem 1.6rem;
+  background: #171717;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.85rem;
+  color: #f4f4f5;
 }
 
 .pit-review__top {
@@ -116,28 +117,26 @@ function initials(name: string): string {
 .pit-review__avatar {
   display: grid;
   place-items: center;
-  width: 3rem;
-  height: 3rem;
+  width: 2.85rem;
+  height: 2.85rem;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--pit-red) 18%, #f4f4f5);
+  background: color-mix(in srgb, var(--pit-red) 22%, #1a1a1a);
   color: var(--pit-red);
   font-family: var(--pit-font-display);
-  font-weight: 800;
-  font-size: 0.95rem;
+  font-weight: 700;
+  font-size: 0.9rem;
 }
 
 .pit-review__author {
   font-family: var(--pit-font-display);
   font-weight: 700;
-  font-size: 1.05rem;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
+  font-size: 1rem;
 }
 
 .pit-review__stars {
   margin-top: 0.15rem;
   letter-spacing: 0.08em;
-  color: #d4d4d8;
+  color: #3f3f46;
   line-height: 1;
 }
 
@@ -147,8 +146,8 @@ function initials(name: string): string {
 
 .pit-review blockquote {
   margin: 1rem 0 0;
-  font-size: 1.02rem;
+  font-size: 0.98rem;
   line-height: 1.65;
-  color: #3f3f46;
+  color: #a1a1aa;
 }
 </style>

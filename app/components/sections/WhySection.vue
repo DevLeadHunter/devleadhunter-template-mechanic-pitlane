@@ -19,8 +19,10 @@
             class="pit-why__icon"
             aria-hidden="true"
             v-html="icons[index % icons.length]"></span>
-          <h3>{{ item.title }}</h3>
-          <p>{{ item.description }}</p>
+          <div class="pit-why__body">
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.description }}</p>
+          </div>
         </article>
       </div>
     </div>
@@ -43,89 +45,98 @@ defineProps({
 })
 
 const icons: string[] = [
-  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16v3H4zM7 10v10M17 10v10M10 7V4h4v3"/></svg>',
-  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2 4 14h7l-1 8 10-14h-7l1-6z"/></svg>',
-  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.5-3.2 4-5 7-5s5.5 1.8 7 5"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="12" rx="1"/><path d="M7 10h4M7 14h2M14 12h4"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 4 6v6c0 5 3.4 8.4 8 9 4.6-.6 8-4 8-9V6l-8-3z"/><path d="m9 12 2 2 4-4"/></svg>',
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>',
 ]
 </script>
 
 <style scoped>
 .pit-why {
-  background: var(--pit-surface);
-  border-block: 1px solid var(--pit-line);
+  background: #111;
 }
 
 .pit-why__head {
-  text-align: center;
+  text-align: left;
   max-width: 40rem;
-  margin: 0 auto 2.8rem;
+  margin: 0 0 3.5rem;
 }
 
 .pit-why__head .pit-heading {
   margin-top: 0;
+  white-space: normal;
+}
+
+@media (min-width: 900px) {
+  .pit-why__head {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .pit-why__head .pit-heading {
+    white-space: nowrap;
+  }
 }
 
 .pit-why__sub {
-  margin-top: 0.75rem;
+  margin-top: 0.85rem;
   color: var(--pit-red);
-  font-family: var(--pit-font-display);
-  font-weight: 600;
+  font-family: var(--pit-font-sans);
+  font-weight: 500;
   font-size: 1.05rem;
-  letter-spacing: 0.04em;
 }
 
 .pit-why__grid {
   display: grid;
-  gap: 1.5rem 2rem;
+  gap: 3rem 1.5rem;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 900px) {
   .pit-why__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 2rem 3rem;
+    column-gap: clamp(3.5rem, 8vw, 6.5rem);
+    row-gap: 3.5rem;
   }
 }
 
 .pit-why__card {
   display: grid;
   grid-template-columns: auto 1fr;
-  grid-template-rows: auto auto;
-  column-gap: 1.15rem;
-  row-gap: 0.45rem;
-  padding: 0.4rem 0;
+  gap: 1.15rem;
+  align-items: start;
 }
 
 .pit-why__icon {
-  grid-row: 1 / span 2;
   display: grid;
   place-items: center;
-  width: 3.6rem;
-  height: 3.6rem;
+  width: 3.25rem;
+  height: 3.25rem;
   border-radius: 999px;
   background: var(--pit-red);
   color: #fff;
-  align-self: start;
+  flex: none;
 }
 
 .pit-why__icon :deep(svg) {
-  width: 1.35rem;
-  height: 1.35rem;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
-.pit-why__card h3 {
+.pit-why__body h3 {
   font-family: var(--pit-font-display);
   font-weight: 700;
-  font-size: 1.35rem;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  align-self: end;
+  font-size: 1.2rem;
+  color: #fff;
+  margin: 0.15rem 0 0;
 }
 
-.pit-why__card p {
-  color: var(--pit-muted);
-  line-height: 1.65;
-  font-size: 1.02rem;
-  max-width: 34rem;
+.pit-why__body p {
+  margin-top: 0.65rem;
+  color: #a3a3a3;
+  line-height: 1.7;
+  font-size: 0.98rem;
+  max-width: 32rem;
 }
 </style>

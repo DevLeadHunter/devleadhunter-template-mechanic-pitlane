@@ -6,147 +6,107 @@
       <div
         class="pit-book__head"
         data-pit-reveal>
-        <p class="pit-eyebrow">Réserver</p>
-        <h2 class="pit-heading">Formulaire de rendez-vous</h2>
-        <p class="pit-lead pit-book__lead">
-          Indiquez vos coordonnées et votre véhicule — on vous rappelle pour confirmer.
-        </p>
+        <p class="pit-eyebrow">Prendre un</p>
+        <h2 class="pit-heading">Rendez-vous</h2>
       </div>
 
       <form
         class="pit-book__form"
         data-pit-reveal
+        :style="{ '--pit-delay': '80ms' }"
         @submit.prevent="onSubmit">
-        <div class="pit-book__block">
-          <h3>Coordonnées</h3>
-          <div class="pit-book__grid">
-            <label>
-              <span>Votre nom</span>
-              <input
-                v-model="form.name"
-                type="text"
-                name="name"
-                autocomplete="name"
-                required
-                placeholder="Jean Dupont" />
-            </label>
-            <label>
-              <span>Téléphone</span>
-              <input
-                v-model="form.phone"
-                type="tel"
-                name="phone"
-                autocomplete="tel"
-                required
-                placeholder="06 12 34 56 78" />
-            </label>
-            <label>
-              <span>Email</span>
-              <input
-                v-model="form.email"
-                type="email"
-                name="email"
-                autocomplete="email"
-                placeholder="vous@email.fr" />
-            </label>
-            <label>
-              <span>Date souhaitée</span>
-              <input
-                v-model="form.date"
-                type="date"
-                name="date" />
-            </label>
-            <label>
-              <span>Créneau</span>
-              <select
-                v-model="form.slot"
-                name="slot">
-                <option value="">Indifférent</option>
-                <option value="matin">Matin</option>
-                <option value="apres-midi">Après-midi</option>
-              </select>
-            </label>
-            <label>
-              <span>Ville / quartier</span>
-              <input
-                v-model="form.location"
-                type="text"
-                name="location"
-                :placeholder="city || 'Rennes'" />
-            </label>
-          </div>
+        <div class="pit-book__grid">
+          <label class="pit-field">
+            <span class="sr-only">Votre nom</span>
+            <input
+              v-model="form.name"
+              type="text"
+              name="name"
+              autocomplete="name"
+              required
+              placeholder="Votre nom" />
+          </label>
+          <label class="pit-field">
+            <span class="sr-only">Téléphone</span>
+            <input
+              v-model="form.phone"
+              type="tel"
+              name="phone"
+              autocomplete="tel"
+              required
+              placeholder="Téléphone" />
+          </label>
+          <label class="pit-field">
+            <span class="sr-only">Email</span>
+            <input
+              v-model="form.email"
+              type="email"
+              name="email"
+              autocomplete="email"
+              placeholder="Email" />
+          </label>
+          <label class="pit-field pit-field--icon">
+            <span class="sr-only">Date souhaitée</span>
+            <input
+              v-model="form.date"
+              type="date"
+              name="date"
+              placeholder="Date" />
+          </label>
         </div>
 
-        <div class="pit-book__block">
-          <h3>Véhicule</h3>
-          <div class="pit-book__plate">
-            <label class="pit-book__plate-field">
-              <span>Immatriculation</span>
-              <input
-                v-model="form.plate"
-                type="text"
-                name="plate"
-                maxlength="12"
-                placeholder="AB-123-CD"
-                autocomplete="off"
-                @keydown.enter.prevent="lookupPlate" />
-            </label>
-            <button
-              type="button"
-              class="pit-btn pit-btn--red"
-              :disabled="plateLoading || !form.plate.trim()"
-              @click="lookupPlate">
-              {{ plateLoading ? 'Recherche…' : 'Identifier' }}
-            </button>
-          </div>
-          <p
-            v-if="plateMessage"
-            class="pit-book__plate-msg"
-            :class="{ 'is-error': plateError }">
-            {{ plateMessage }}
-          </p>
+        <div class="pit-book__plate-row">
+          <label class="pit-field pit-field--grow">
+            <span class="sr-only">Immatriculation</span>
+            <input
+              :value="form.plate"
+              type="text"
+              name="plate"
+              maxlength="9"
+              placeholder="Immatriculation (AA-123-BB)"
+              autocomplete="off"
+              spellcheck="false"
+              @input="handlePlateInput"
+              @keydown.enter.prevent="lookupPlate" />
+          </label>
+          <button
+            type="button"
+            class="pit-btn pit-btn--red pit-book__lookup"
+            :disabled="plateLoading || form.plate.replace(/[^a-zA-Z0-9]/g, '').length < 7"
+            @click="lookupPlate">
+            {{ plateLoading ? 'Recherche…' : 'Identifier avec ma plaque' }}
+          </button>
+        </div>
+        <p
+          v-if="plateMessage"
+          class="pit-book__plate-msg"
+          :class="{ 'is-error': plateError, 'is-ok': !plateError }">
+          {{ plateMessage }}
+        </p>
 
-          <div class="pit-book__grid">
-            <label>
-              <span>Marque</span>
-              <input
-                v-model="form.make"
-                type="text"
-                name="make"
-                placeholder="Peugeot, Renault…"
-                required />
-            </label>
-            <label>
-              <span>Modèle</span>
-              <input
-                v-model="form.model"
-                type="text"
-                name="model"
-                placeholder="308, Clio…"
-                required />
-            </label>
-            <label>
-              <span>Année</span>
-              <input
-                v-model="form.year"
-                type="text"
-                name="year"
-                inputmode="numeric"
-                placeholder="2018" />
-            </label>
-            <label>
-              <span>Énergie</span>
-              <input
-                v-model="form.fuel"
-                type="text"
-                name="fuel"
-                placeholder="Essence, Diesel…" />
-            </label>
-          </div>
+        <div class="pit-book__grid pit-book__grid--2">
+          <label class="pit-field">
+            <span class="sr-only">Marque</span>
+            <input
+              v-model="form.make"
+              type="text"
+              name="make"
+              placeholder="Marque"
+              required />
+          </label>
+          <label class="pit-field">
+            <span class="sr-only">Modèle</span>
+            <input
+              v-model="form.model"
+              type="text"
+              name="model"
+              placeholder="Modèle"
+              required />
+          </label>
         </div>
 
-        <div class="pit-book__block">
-          <h3>Prestations souhaitées</h3>
+        <div class="pit-book__services">
+          <p class="pit-book__services-title">Prestations souhaitées</p>
           <div class="pit-book__checks">
             <label
               v-for="service in serviceOptions"
@@ -156,6 +116,9 @@
                 v-model="form.services"
                 type="checkbox"
                 :value="service" />
+              <span
+                class="pit-check__box"
+                aria-hidden="true"></span>
               <span>{{ service }}</span>
             </label>
           </div>
@@ -164,9 +127,10 @@
         <div class="pit-book__footer">
           <button
             type="submit"
-            class="pit-btn pit-btn--red"
+            class="pit-btn pit-btn--red pit-book__submit"
             :disabled="submitted">
             {{ submitted ? 'Demande préparée' : 'Prendre rendez-vous' }}
+            <span aria-hidden="true">↗</span>
           </button>
           <p
             v-if="phone"
@@ -204,7 +168,7 @@ const props = defineProps({
 
 const serviceOptions: ComputedRef<string[]> = computed((): string[] => {
   if (props.serviceTitles.length) {
-    return props.serviceTitles.slice(0, 6)
+    return props.serviceTitles.slice(0, 9)
   }
   return ['Révision & entretien', 'Diagnostic', 'Freinage', 'Pneus', 'Carrosserie', 'Autre']
 })
@@ -214,8 +178,6 @@ const form = reactive({
   phone: '',
   email: '',
   date: '',
-  slot: '',
-  location: '',
   plate: '',
   make: '',
   model: '',
@@ -229,97 +191,122 @@ const plateLoading: Ref<boolean> = ref(false)
 const plateMessage: Ref<string> = ref('')
 const plateError: Ref<boolean> = ref(false)
 
+/** Token démo public Auto Ways (doc API) — sans config. */
+const PLATE_DEMO_TOKEN = '92cbc2ae3c8a30028d98b10872dd4c3a'
+
 /**
- * Normalise une plaque FR (AA-123-AA ou 1234-AA-12).
- * @param value Saisie brute
- * @returns Plaque nettoyée
+ * Formate automatiquement une plaque SIV (AA-123-BB).
+ * @param event Input
  */
-function cleanPlate(value: string): string {
-  return value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()
+function handlePlateInput(event: Event): void {
+  const input = event.target as HTMLInputElement
+  const raw = input.value
+    .replace(/[^a-zA-Z0-9]/g, '')
+    .toUpperCase()
+    .slice(0, 7)
+  let formatted = raw
+  if (raw.length > 5) {
+    formatted = `${raw.slice(0, 2)}-${raw.slice(2, 5)}-${raw.slice(5, 7)}`
+  } else if (raw.length > 2) {
+    formatted = `${raw.slice(0, 2)}-${raw.slice(2)}`
+  }
+  form.plate = formatted
 }
 
 /**
- * Interroge une API publique d’immatriculation ; fallback saisie manuelle.
- * @returns void
+ * Identifie le véhicule via l’API publique Auto Ways (CORS ouvert).
+ * Endpoint path : /autowayapi/{plaque}?token=…
  */
 async function lookupPlate(): Promise<void> {
-  const plate: string = cleanPlate(form.plate)
-  if (plate.length < 5) {
+  const plate: string = form.plate.replace(/[^a-zA-Z0-9]/g, '').toUpperCase()
+  if (!/^[A-Z]{2}\d{3}[A-Z]{2}$/.test(plate)) {
     plateError.value = true
-    plateMessage.value = 'Indiquez une immatriculation valide (ex. AB-123-CD).'
+    plateMessage.value = 'Format attendu : AA-123-BB (ex. FH-034-DD).'
     return
   }
+
+  const formatted = `${plate.slice(0, 2)}-${plate.slice(2, 5)}-${plate.slice(5, 7)}`
+  form.plate = formatted
 
   plateLoading.value = true
   plateError.value = false
   plateMessage.value = ''
 
-  try {
-    // API publique (cors-friendly via proxy) — utilisée pour préremplir marque/modèle/année.
-    const endpoint: string = `https://api.allorigins.win/raw?url=${encodeURIComponent(
-      `https://api.apiplaqueimmatriculation.fr/get-vehicule?immatriculation=${plate}`,
-    )}`
-    const response: Response = await fetch(endpoint, { signal: AbortSignal.timeout(8000) })
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`)
-    }
-    const data: Record<string, unknown> = (await response.json()) as Record<string, unknown>
-    const make: string = String(data.marque ?? data.brand ?? data.make ?? '').trim()
-    const model: string = String(data.modele ?? data.model ?? '').trim()
-    const year: string = String(data.annee ?? data.year ?? data.date_mise_en_circulation ?? '')
-      .slice(0, 4)
-      .trim()
-    const fuel: string = String(data.energie ?? data.fuel ?? '').trim()
+  const urls: string[] = [
+    `https://app.auto-ways.net/autowayapi/${encodeURIComponent(formatted)}?token=${PLATE_DEMO_TOKEN}`,
+    `https://app.auto-ways.net/autowayapi/${encodeURIComponent(plate)}?token=${PLATE_DEMO_TOKEN}`,
+  ]
 
-    if (!make && !model) {
-      throw new Error('empty')
-    }
+  let filled = false
+  for (const url of urls) {
+    try {
+      const response: Response = await fetch(url, {
+        method: 'GET',
+        signal: AbortSignal.timeout(12000),
+      })
+      const payload: Record<string, unknown> = (await response.json()) as Record<string, unknown>
+      if (payload.error === true || !response.ok) {
+        if (response.status === 404) {
+          plateError.value = true
+          plateMessage.value = 'Véhicule introuvable pour cette plaque. Saisissez marque et modèle.'
+          plateLoading.value = false
+          return
+        }
+        continue
+      }
 
-    if (make) {
-      form.make = make
+      const data = (payload.data ?? payload) as Record<string, unknown>
+      const make = String(data.AWN_marque ?? data.marque ?? data.make ?? '').trim()
+      const model = String(data.AWN_modele ?? data.modele ?? data.model ?? '').trim()
+      const dateRaw = String(
+        data.AWN_date_mise_en_circulation ?? data.date_mise_en_circulation ?? data.annee ?? '',
+      )
+      const year = dateRaw.match(/\d{4}/)?.[0] ?? dateRaw.slice(0, 4)
+      const fuel = String(
+        data.AWN_energie_description ?? data.AWN_energie ?? data.energie ?? data.fuel ?? '',
+      ).trim()
+
+      if (!make && !model) continue
+
+      if (make) form.make = make
+      if (model) form.model = model
+      if (year && /^\d{4}$/.test(year)) form.year = year
+      if (fuel && fuel !== 'INCONNU') form.fuel = fuel
+
+      plateMessage.value = `Véhicule identifié : ${[make, model].filter(Boolean).join(' ')}. Vérifiez avant d’envoyer.`
+      filled = true
+      break
+    } catch {
+      // endpoint suivant
     }
-    if (model) {
-      form.model = model
-    }
-    if (year) {
-      form.year = year
-    }
-    if (fuel) {
-      form.fuel = fuel
-    }
-    plateMessage.value = 'Véhicule identifié — vérifiez les infos avant d’envoyer.'
-  } catch {
+  }
+
+  if (!filled) {
     plateError.value = true
     plateMessage.value =
-      'Identification automatique indisponible pour le moment. Complétez marque et modèle à la main.'
-  } finally {
-    plateLoading.value = false
+      'Identification indisponible pour le moment. Complétez marque et modèle manuellement.'
   }
+
+  plateLoading.value = false
 }
 
-/**
- * Ouvre un mailto prérempli vers le garage.
- * @returns void
- */
+/** Mailto prérempli vers le garage. */
 function onSubmit(): void {
   const lines: string[] = [
     `Nom : ${form.name}`,
     `Téléphone : ${form.phone}`,
     form.email ? `Email : ${form.email}` : '',
     form.date ? `Date souhaitée : ${form.date}` : '',
-    form.slot ? `Créneau : ${form.slot}` : '',
-    form.location ? `Lieu : ${form.location}` : '',
     form.plate ? `Immatriculation : ${form.plate}` : '',
-    `Véhicule : ${form.make} ${form.model} ${form.year} ${form.fuel}`.trim(),
+    `Véhicule : ${[form.make, form.model, form.year, form.fuel].filter(Boolean).join(' ')}`,
     form.services.length ? `Prestations : ${form.services.join(', ')}` : '',
   ].filter((line: string): boolean => line.length > 0)
 
   const target: string = props.email || ''
   if (target) {
-    const href: string = `mailto:${encodeURIComponent(target)}?subject=${encodeURIComponent(
+    window.location.href = `mailto:${encodeURIComponent(target)}?subject=${encodeURIComponent(
       `Demande de RDV — ${form.make} ${form.model}`,
     )}&body=${encodeURIComponent(lines.join('\n'))}`
-    window.location.href = href
   } else if (props.phone) {
     window.location.href = `tel:${props.phone}`
   }
@@ -329,156 +316,227 @@ function onSubmit(): void {
 
 <style scoped>
 .pit-book {
-  background:
-    radial-gradient(
-      ellipse at top,
-      color-mix(in srgb, var(--pit-red) 16%, transparent),
-      transparent 55%
-    ),
-    var(--pit-bg);
+  background: #0c0c0d;
+  /* Extra air vs sections voisines — évite l’effet « collé » */
+  padding-block: clamp(5.5rem, 12vw, 8.5rem);
+  /* Coupe tout halo / artefact en haut de section */
+  isolation: isolate;
+  overflow: clip;
 }
 
 .pit-book__head {
-  text-align: center;
-  max-width: 40rem;
-  margin: 0 auto 2.2rem;
+  text-align: left;
+  margin-bottom: 2.75rem;
 }
 
 .pit-book__head .pit-heading {
-  margin-top: 0.75rem;
-}
-
-.pit-book__lead {
-  margin-inline: auto;
+  margin-top: 0.55rem;
 }
 
 .pit-book__form {
   width: 100%;
   max-width: 52rem;
-  margin-inline: auto;
-  padding: clamp(1.5rem, 3.5vw, 2.5rem);
-  background: #fff;
-  color: #151518;
-  border-radius: 0.65rem;
-  box-shadow: 0 30px 80px -40px color-mix(in srgb, var(--pit-red) 55%, transparent);
-}
-
-.pit-book__block + .pit-book__block {
-  margin-top: 1.5rem;
-  padding-top: 1.35rem;
-  border-top: 1px solid #ececef;
-}
-
-.pit-book__block h3 {
-  font-family: var(--pit-font-display);
-  font-weight: 700;
-  font-size: 1.1rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  margin-bottom: 1rem;
-  color: #18181b;
+  display: grid;
+  gap: 1.15rem;
 }
 
 .pit-book__grid {
   display: grid;
-  gap: 0.9rem;
+  gap: 1rem;
   grid-template-columns: 1fr;
 }
 
-@media (min-width: 700px) {
+@media (min-width: 640px) {
   .pit-book__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-.pit-book__form label {
-  display: grid;
-  gap: 0.4rem;
+.pit-book__grid--2 {
+  margin-top: 0.25rem;
 }
 
-.pit-book__form label > span {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #52525b;
+.pit-field {
+  display: block;
+  min-width: 0;
 }
 
-.pit-book__form input,
+.pit-field input,
 .pit-book__form select {
   width: 100%;
-  padding: 0.9rem 1rem;
-  border: 1px solid #e4e4e7;
-  border-radius: 0.4rem;
-  background: #fafafa;
-  color: #151518;
+  padding: 1rem 1.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: #1a1a1a;
+  color: #f4f4f5;
   font: inherit;
+  font-size: 0.98rem;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+  /* Évite le halo bleu navigateur / autofill */
+  outline: none;
+  box-shadow: none;
+  caret-color: var(--pit-red);
+  color-scheme: dark;
 }
 
-.pit-book__form input:focus,
-.pit-book__form select:focus {
-  outline: 2px solid var(--pit-red);
-  outline-offset: 1px;
-  border-color: transparent;
-  background: #fff;
+.pit-field input::placeholder {
+  color: #7a7a7a;
 }
 
-.pit-book__plate {
+.pit-field input:focus {
+  border-color: var(--pit-red);
+  background: #1f1f1f;
+  outline: none;
+  box-shadow: none;
+}
+
+.pit-field input:-webkit-autofill,
+.pit-field input:-webkit-autofill:hover,
+.pit-field input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f4f4f5;
+  caret-color: var(--pit-red);
+  transition: background-color 99999s ease-in-out 0s;
+  box-shadow: 0 0 0 1000px #1a1a1a inset;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.pit-book__plate-row {
   display: grid;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+  gap: 0.85rem;
 }
 
 @media (min-width: 700px) {
-  .pit-book__plate {
+  .pit-book__plate-row {
     grid-template-columns: 1fr auto;
-    align-items: end;
+    align-items: stretch;
   }
 }
 
-.pit-book__plate-field {
-  display: grid;
-  gap: 0.4rem;
+.pit-book__lookup {
+  border-radius: 999px;
+  white-space: nowrap;
+  padding-inline: 1.4rem;
+  font-size: 0.82rem;
+  box-shadow: none;
 }
 
 .pit-book__plate-msg {
-  margin: -0.35rem 0 1rem;
+  margin: -0.35rem 0 0;
   font-size: 0.9rem;
-  color: #3f3f46;
+  color: #9a9a9a;
 }
 
 .pit-book__plate-msg.is-error {
-  color: #b42318;
+  color: #f87171;
+}
+
+.pit-book__plate-msg.is-ok {
+  color: #86efac;
+}
+
+.pit-book__services {
+  margin-top: 0.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pit-book__services-title {
+  font-family: var(--pit-font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #fff;
+  margin-bottom: 1.15rem;
 }
 
 .pit-book__checks {
   display: grid;
-  gap: 0.65rem 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.85rem 1.5rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 560px) {
+  .pit-book__checks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .pit-book__checks {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 .pit-check {
-  display: flex !important;
+  display: flex;
   align-items: center;
-  gap: 0.55rem;
-  font-weight: 600;
+  gap: 0.7rem;
+  color: #f4f4f5;
+  font-size: 0.95rem;
   cursor: pointer;
+  user-select: none;
 }
 
 .pit-check input {
-  width: 1.1rem;
-  height: 1.1rem;
-  accent-color: var(--pit-red);
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.pit-check__box {
+  flex-shrink: 0;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 0.3rem;
+  border: 1.5px solid var(--pit-red);
+  background: transparent;
+  display: grid;
+  place-items: center;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.pit-check__box::after {
+  content: '';
+  width: 0.55rem;
+  height: 0.35rem;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(-45deg) translateY(-1px);
+  opacity: 0;
+}
+
+.pit-check input:checked + .pit-check__box {
+  background: var(--pit-red);
+  border-color: var(--pit-red);
+}
+
+.pit-check input:checked + .pit-check__box::after {
+  opacity: 1;
 }
 
 .pit-book__footer {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 1rem 1.5rem;
-  margin-top: 1.8rem;
+  gap: 1rem 1.75rem;
+  padding-top: 1.25rem;
+}
+
+.pit-book__submit {
+  border-radius: 999px;
+  padding: 1rem 1.85rem;
+  box-shadow: none;
+  text-transform: none;
+  letter-spacing: 0.02em;
 }
 
 .pit-book__hint {
-  color: #52525b;
+  color: #9a9a9a;
   font-size: 0.95rem;
 }
 
@@ -486,5 +544,17 @@ function onSubmit(): void {
   color: var(--pit-red);
   font-weight: 700;
   text-decoration: none;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 </style>

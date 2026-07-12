@@ -11,6 +11,11 @@ const landry = {
   atelier: 'https://www.garagedulandry.com/upload-bloc_raison/medium1920/bg-centre.jpg',
   stock:
     'https://www.garagedulandry.com/upload-categorie_ref_prod/medium640/adobestock-342963007--1---1-.jpeg',
+  /** Fallback supplémentaire si une image atelier renvoie un blanc / 403 hotlink. */
+  unsplashShop:
+    'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1200&q=80',
+  unsplashBay:
+    'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=1200&q=80',
 }
 
 /**
@@ -95,8 +100,10 @@ export const mockSiteContent: SiteContent = {
     { url: landry.service2, alt: 'Intervention carrosserie' },
     { url: landry.service3, alt: 'Prestations entretien automobile' },
     { url: landry.parallax, alt: 'Espace atelier du garage' },
-    { url: landry.atelier, alt: 'Centre automobile du Landry' },
+    { url: landry.unsplashShop, alt: 'Poste de travail mécanicien' },
     { url: landry.about, alt: 'Accueil Automobiles du Landry' },
+    { url: landry.unsplashBay, alt: 'Baie de réparation véhicule' },
+    { url: landry.stock, alt: 'Véhicule en atelier' },
   ],
   reviews: [
     {

@@ -2,46 +2,123 @@
   <section
     id="localisation"
     class="pit-section pit-map">
-    <div class="pit-container pit-map__grid">
+    <div class="pit-container">
       <div
-        class="pit-map__card"
+        class="pit-map__header"
         data-pit-reveal>
         <p class="pit-eyebrow">Nous trouver</p>
         <h2 class="pit-heading">{{ businessName || 'Le garage' }}</h2>
-        <p
-          v-if="area || city"
-          class="pit-map__address">
-          <template v-if="area">{{ area }}</template>
-          <template v-if="area && city"><br /></template>
-          <template v-if="city">{{ city }}</template>
-        </p>
-        <ul class="pit-map__meta">
-          <li v-if="phone">
-            <a :href="`tel:${phone}`">{{ phone }}</a>
-          </li>
-          <li v-if="email">
-            <a :href="`mailto:${email}`">{{ email }}</a>
-          </li>
-        </ul>
-        <a
-          v-if="mapsUrl"
-          :href="mapsUrl"
-          class="pit-btn pit-btn--red"
-          target="_blank"
-          rel="noopener noreferrer"
-          >Itinéraire</a
-        >
       </div>
 
-      <div
-        class="pit-map__frame"
-        data-pit-reveal
-        :style="{ '--pit-delay': '90ms' }">
-        <iframe
-          title="Carte du garage"
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-          :src="embedUrl"></iframe>
+      <div class="pit-map__grid">
+        <div
+          class="pit-map__contacts"
+          data-pit-reveal>
+          <div
+            v-if="area || city"
+            class="pit-map__contact-row">
+            <span
+              class="pit-map__contact-icon"
+              aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor">
+                <path
+                  d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z" />
+              </svg>
+            </span>
+            <div class="pit-map__contact-body">
+              <span class="pit-map__contact-label">Adresse</span>
+              <span class="pit-map__contact-value">
+                <template v-if="area">{{ area }}</template>
+                <template v-if="area && city"><br /></template>
+                <template v-if="city">{{ city }}</template>
+              </span>
+            </div>
+          </div>
+
+          <div
+            v-if="phone"
+            class="pit-map__contact-row">
+            <span
+              class="pit-map__contact-icon"
+              aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor">
+                <path
+                  d="M6.62 10.79a15.15 15.15 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.4 21 3 13.6 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2z" />
+              </svg>
+            </span>
+            <div class="pit-map__contact-body">
+              <span class="pit-map__contact-label">Téléphone</span>
+              <a
+                :href="`tel:${phone}`"
+                class="pit-map__contact-value pit-map__contact-link"
+                >{{ phone }}</a
+              >
+            </div>
+          </div>
+
+          <div
+            v-if="email"
+            class="pit-map__contact-row">
+            <span
+              class="pit-map__contact-icon"
+              aria-hidden="true">
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor">
+                <path
+                  d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5L4 8V6l8 5 8-5v2z" />
+              </svg>
+            </span>
+            <div class="pit-map__contact-body">
+              <span class="pit-map__contact-label">Email</span>
+              <a
+                :href="`mailto:${email}`"
+                class="pit-map__contact-value pit-map__contact-link"
+                >{{ email }}</a
+              >
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="pit-map__frame-wrap"
+          data-pit-reveal
+          :style="{ '--pit-delay': '90ms' }">
+          <div class="pit-map__frame">
+            <iframe
+              title="Carte du garage"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              :src="embedUrl"></iframe>
+
+            <div
+              v-if="businessName || area"
+              class="pit-map__card">
+              <p class="pit-map__card-name">{{ businessName || 'Garage' }}</p>
+              <p
+                v-if="area || city"
+                class="pit-map__card-addr">
+                <template v-if="area">{{ area }}</template>
+                <template v-if="area && city">, </template>
+                <template v-if="city">{{ city }}</template>
+              </p>
+            </div>
+
+            <a
+              v-if="mapsUrl"
+              :href="mapsUrl"
+              class="pit-map__gmaps"
+              target="_blank"
+              rel="noopener noreferrer">
+              Voir sur Google Maps
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -71,7 +148,6 @@ const props = defineProps({
     type: String,
     default: '',
   },
-  /** Coordonnées optionnelles ; défaut Rennes Landry. */
   lat: {
     type: Number,
     default: 48.1028,
@@ -95,7 +171,7 @@ const mapsUrl: ComputedRef<string> = computed(
 )
 
 const embedUrl: ComputedRef<string> = computed((): string => {
-  const delta = 0.012
+  const delta = 0.01
   const left = props.lng - delta
   const right = props.lng + delta
   const top = props.lat + delta
@@ -106,83 +182,165 @@ const embedUrl: ComputedRef<string> = computed((): string => {
 
 <style scoped>
 .pit-map {
-  background: var(--pit-surface);
-  border-block: 1px solid var(--pit-line);
+  background: #111;
+  padding-top: clamp(5.5rem, 12vw, 8.5rem);
+  padding-bottom: clamp(7rem, 15vw, 11rem);
+}
+
+.pit-map__header {
+  margin-bottom: 3rem;
+  text-align: left;
+}
+
+.pit-map__header .pit-heading {
+  margin-top: 0.65rem;
 }
 
 .pit-map__grid {
   display: grid;
-  gap: 1.25rem;
+  gap: 2.5rem;
 }
 
 @media (min-width: 900px) {
   .pit-map__grid {
-    grid-template-columns: minmax(18rem, 0.85fr) minmax(0, 1.15fr);
-    gap: 1.5rem;
-    align-items: stretch;
+    grid-template-columns: minmax(15rem, 0.65fr) minmax(0, 1.35fr);
+    gap: 3rem;
+    align-items: center;
   }
 }
 
-.pit-map__card {
-  padding: clamp(1.5rem, 3vw, 2.2rem);
-  background: var(--pit-card);
-  border: 1px solid var(--pit-line);
-  border-left: 4px solid var(--pit-red);
+.pit-map__contacts {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 0.35rem;
+  gap: 2rem;
 }
 
-.pit-map__card .pit-heading {
-  margin-top: 0.55rem;
-  font-size: clamp(1.7rem, 3vw, 2.3rem);
+.pit-map__contact-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.1rem;
 }
 
-.pit-map__address {
-  margin-top: 0.85rem;
-  color: var(--pit-muted);
-  line-height: 1.55;
-  font-size: 1.05rem;
-}
-
-.pit-map__meta {
-  list-style: none;
-  margin: 1rem 0 1.4rem;
-  padding: 0;
+.pit-map__contact-icon {
+  flex-shrink: 0;
   display: grid;
-  gap: 0.35rem;
+  place-items: center;
+  width: 3.1rem;
+  height: 3.1rem;
+  border-radius: 999px;
+  background: var(--pit-red);
+  color: #111;
 }
 
-.pit-map__meta a {
-  color: var(--pit-ink);
-  font-weight: 600;
+.pit-map__contact-icon svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.pit-map__contact-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-top: 0.2rem;
+}
+
+.pit-map__contact-label {
+  font-family: var(--pit-font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.pit-map__contact-value {
+  font-size: 1.02rem;
+  font-weight: 400;
+  color: #fff;
+  line-height: 1.45;
+}
+
+.pit-map__contact-link {
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
-.pit-map__meta a:hover {
+.pit-map__contact-link:hover {
   color: var(--pit-red);
 }
 
 .pit-map__frame {
-  min-height: 18rem;
-  border: 1px solid var(--pit-line);
+  position: relative;
+  width: 100%;
+  min-height: 24rem;
+  border-radius: 0.9rem;
   overflow: hidden;
-  background: #1a1a1d;
+  background: #e8e8e8;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .pit-map__frame iframe {
   width: 100%;
   height: 100%;
-  min-height: 18rem;
+  min-height: 24rem;
   border: 0;
-  filter: grayscale(0.35) contrast(1.05);
+  display: block;
+  /* Style « muted / silver » proche maquette */
+  filter: grayscale(0.55) saturate(0.55) contrast(1.05) brightness(1.05);
 }
 
 @media (min-width: 900px) {
   .pit-map__frame,
   .pit-map__frame iframe {
-    min-height: 22rem;
+    min-height: 28rem;
   }
+}
+
+.pit-map__card {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 2;
+  max-width: min(18rem, calc(100% - 2rem));
+  padding: 0.85rem 1rem;
+  background: #fff;
+  border-radius: 0.55rem;
+  box-shadow: 0 10px 28px -12px rgba(0, 0, 0, 0.45);
+}
+
+.pit-map__card-name {
+  font-family: var(--pit-font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #222;
+}
+
+.pit-map__card-addr {
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: #777;
+  line-height: 1.4;
+}
+
+.pit-map__gmaps {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.7rem 1.1rem;
+  border-radius: 0.55rem;
+  background: var(--pit-red);
+  color: #fff;
+  font-family: var(--pit-font-display);
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-decoration: none;
+  box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.5);
+  transition: background 0.2s ease;
+}
+
+.pit-map__gmaps:hover {
+  background: color-mix(in srgb, var(--pit-red) 88%, white);
 }
 </style>

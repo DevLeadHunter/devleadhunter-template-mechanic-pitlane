@@ -11,8 +11,8 @@
  * Runtime palette overrides live on `.pit` via CSS vars from the root.
  */
 @theme {
-  --font-sans: 'Barlow', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Barlow Condensed', 'Barlow', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
 
   --color-pit-red: #e11d2e;
   --color-pit-ink: #f4f4f5;
