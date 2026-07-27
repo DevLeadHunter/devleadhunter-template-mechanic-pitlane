@@ -242,14 +242,14 @@ useHead({
   --pit-muted: #a1a1aa;
   --pit-line: color-mix(in srgb, var(--pit-ink) 12%, transparent);
   --pit-red-glow: color-mix(in srgb, var(--pit-red) 45%, transparent);
-  --pit-font-display: 'Montserrat', sans-serif;
-  --pit-font-sans: 'Montserrat', sans-serif;
+  --pit-font-pitlane-display: 'Montserrat', sans-serif;
+  --pit-font-pitlane-sans: 'Montserrat', sans-serif;
 
   position: relative;
   min-height: 100dvh;
   background: var(--pit-bg);
   color: var(--pit-ink);
-  font-family: var(--pit-font-sans);
+  font-family: var(--pit-font-pitlane-sans);
   overflow-x: clip;
   padding-bottom: 0;
 }
@@ -294,7 +294,7 @@ useHead({
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 700;
   font-size: 0.78rem;
   letter-spacing: 0.18em;
@@ -311,7 +311,7 @@ useHead({
 
 .pit-heading {
   margin-top: 0.85rem;
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 700;
   font-size: clamp(2rem, 4.2vw, 3rem);
   line-height: 1.05;
@@ -334,7 +334,7 @@ useHead({
   gap: 0.5rem;
   padding: 0.85rem 1.45rem;
   border-radius: 0.2rem;
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 700;
   font-size: 0.95rem;
   letter-spacing: 0.04em;
@@ -390,7 +390,7 @@ useHead({
 }
 
 .pit-logo {
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 800;
   font-size: clamp(0.78rem, 3.4vw, 1.05rem);
   letter-spacing: 0.03em;
@@ -410,7 +410,7 @@ useHead({
 }
 
 .pit-nav a {
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 600;
   font-size: 0.78rem;
   letter-spacing: 0.05em;

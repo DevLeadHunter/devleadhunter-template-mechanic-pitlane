@@ -122,13 +122,13 @@ function initials(name: string): string {
   border-radius: 999px;
   background: color-mix(in srgb, var(--pit-red) 22%, #1a1a1a);
   color: var(--pit-red);
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 700;
   font-size: 0.9rem;
 }
 
 .pit-review__author {
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 700;
   font-size: 1rem;
 }

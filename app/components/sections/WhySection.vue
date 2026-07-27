@@ -83,7 +83,7 @@ const icons: string[] = [
 .pit-why__sub {
   margin-top: 0.85rem;
   color: var(--pit-red);
-  font-family: var(--pit-font-sans);
+  font-family: var(--pit-font-pitlane-sans);
   font-weight: 500;
   font-size: 1.05rem;
 }
@@ -125,7 +125,7 @@ const icons: string[] = [
 }
 
 .pit-why__body h3 {
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 700;
   font-size: 1.2rem;
   color: #fff;

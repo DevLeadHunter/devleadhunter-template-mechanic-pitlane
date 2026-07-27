@@ -144,7 +144,7 @@ defineProps({
   padding: 0.45rem 1.1rem;
   background: var(--pit-red);
   color: #fff;
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 700;
   font-size: 0.78rem;
   letter-spacing: 0.14em;
@@ -159,7 +159,7 @@ defineProps({
 
 .pit-hero__title {
   margin-top: 1.35rem;
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 800;
   font-size: clamp(2rem, 4.2vw, 3.35rem);
   line-height: 1.12;
@@ -202,7 +202,7 @@ defineProps({
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
-  font-family: var(--pit-font-sans);
+  font-family: var(--pit-font-pitlane-sans);
   font-weight: 600;
   font-size: 0.98rem;
   line-height: 1.35;

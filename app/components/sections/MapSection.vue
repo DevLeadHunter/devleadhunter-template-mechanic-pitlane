@@ -245,7 +245,7 @@ const embedUrl: ComputedRef<string> = computed((): string => {
 }
 
 .pit-map__contact-label {
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-size: 0.95rem;
   font-weight: 700;
   color: #fff;
@@ -307,7 +307,7 @@ const embedUrl: ComputedRef<string> = computed((): string => {
 }
 
 .pit-map__card-name {
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 700;
   font-size: 0.95rem;
   color: #222;
@@ -332,7 +332,7 @@ const embedUrl: ComputedRef<string> = computed((): string => {
   border-radius: 0.55rem;
   background: var(--pit-red);
   color: #fff;
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 700;
   font-size: 0.82rem;
   text-decoration: none;

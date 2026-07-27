@@ -101,7 +101,7 @@ const year: number = new Date().getFullYear()
 }
 
 .pit-footer__brand {
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 800;
   font-size: 1.55rem;
   letter-spacing: 0.04em;
@@ -109,7 +109,7 @@ const year: number = new Date().getFullYear()
 }
 
 .pit-footer__title {
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 700;
   font-size: 1rem;
   letter-spacing: 0.1em;

@@ -11,12 +11,12 @@
  * Runtime palette overrides live on `.pit` via CSS vars from the root.
  */
 @theme {
-  --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  --font-pitlane-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+  --font-pitlane-display: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
 
-  --color-pit-red: #e11d2e;
-  --color-pit-ink: #f4f4f5;
-  --color-pit-muted: #a1a1aa;
-  --color-pit-bg: #0c0c0d;
-  --color-pit-surface: #141416;
+  --color-pitlane-pit-red: #e11d2e;
+  --color-pitlane-pit-ink: #f4f4f5;
+  --color-pitlane-pit-muted: #a1a1aa;
+  --color-pitlane-pit-bg: #0c0c0d;
+  --color-pitlane-pit-surface: #141416;
 }

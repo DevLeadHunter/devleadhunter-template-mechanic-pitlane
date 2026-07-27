@@ -115,7 +115,7 @@ const icons: string[] = [
 }
 
 .pit-process__card h3 {
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 700;
   font-size: 1.1rem;
   color: #fff;

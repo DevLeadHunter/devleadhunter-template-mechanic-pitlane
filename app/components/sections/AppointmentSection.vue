@@ -443,7 +443,7 @@ function onSubmit(): void {
 }
 
 .pit-book__services-title {
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 700;
   font-size: 1.05rem;
   color: #fff;

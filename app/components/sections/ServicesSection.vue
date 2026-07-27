@@ -188,7 +188,7 @@ function onBroken(index: number): void {
 
 .pit-service__label span {
   display: block;
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 700;
   font-size: 0.8rem;
   letter-spacing: 0.14em;
@@ -197,7 +197,7 @@ function onBroken(index: number): void {
 
 .pit-service__label h3 {
   margin-top: 0.3rem;
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 700;
   font-size: clamp(1.25rem, 2vw, 1.55rem);
   letter-spacing: 0.02em;

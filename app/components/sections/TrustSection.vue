@@ -51,7 +51,7 @@ defineProps({
 }
 
 .pit-trust__value {
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 700;
   font-size: clamp(2.6rem, 5.5vw, 3.75rem);
   letter-spacing: -0.02em;
@@ -62,7 +62,7 @@ defineProps({
 .pit-trust__label {
   margin-top: 0.65rem;
   color: #9a9a9a;
-  font-family: var(--pit-font-sans);
+  font-family: var(--pit-font-pitlane-sans);
   font-weight: 400;
   font-size: 0.95rem;
 }

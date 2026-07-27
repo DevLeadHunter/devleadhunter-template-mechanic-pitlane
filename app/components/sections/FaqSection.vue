@@ -167,7 +167,7 @@ const imageBroken: Ref<boolean> = ref(false)
   justify-content: space-between;
   gap: 1rem;
   padding: 1.35rem 0;
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 600;
   font-size: clamp(1rem, 1.8vw, 1.12rem);
   color: #fff;

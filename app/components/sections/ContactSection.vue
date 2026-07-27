@@ -85,7 +85,7 @@ defineProps({
 .pit-contact__zones li {
   padding: 0.3rem 0.65rem;
   border: 1px solid var(--pit-line);
-  font-family: var(--pit-font-display);
+  font-family: var(--pit-font-pitlane-display);
   font-weight: 600;
   font-size: 0.78rem;
   letter-spacing: 0.06em;
