@@ -216,6 +216,37 @@ const defaults = {
     },
   ] as PitlaneFaqItem[],
   contactHeading: 'Prendre rendez-vous',
+  images: {
+    hero: 'https://images.unsplash.com/photo-1658244535411-92c887137240?auto=format&fit=crop&w=1600&q=80',
+    about:
+      'https://images.unsplash.com/photo-1613214150132-9606e332d68e?auto=format&fit=crop&w=1200&q=80',
+    gallery: [
+      {
+        url: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1200&q=80',
+        alt: 'Distribution moteur — courroie et poulies',
+      },
+      {
+        url: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=1200&q=80',
+        alt: 'Intervention mécanique sur moteur',
+      },
+      {
+        url: 'https://images.unsplash.com/photo-1637640125496-31852f042a60?auto=format&fit=crop&w=1200&q=80',
+        alt: 'Outillage d’atelier',
+      },
+      {
+        url: 'https://images.unsplash.com/photo-1723099971299-3789db53604c?auto=format&fit=crop&w=1200&q=80',
+        alt: 'Véhicule sur pont élévateur',
+      },
+      {
+        url: 'https://images.unsplash.com/photo-1711386689622-1cda23e10217?auto=format&fit=crop&w=1200&q=80',
+        alt: 'Réparation sous véhicule',
+      },
+      {
+        url: 'https://images.unsplash.com/photo-1735361039382-d78a0a0cc185?auto=format&fit=crop&w=1200&q=80',
+        alt: 'Atelier mécanique équipé',
+      },
+    ] as PitlaneGalleryItem[],
+  },
 } as const
 
 /**
@@ -260,7 +291,7 @@ export function buildPitlaneContent(content: SiteContent): PitlanePageContent {
           .filter((service): boolean => service.title.length > 0)
       : [...defaults.services]
 
-  const gallery: PitlaneGalleryItem[] = Array.isArray(content.gallery)
+  const galleryFromContent: PitlaneGalleryItem[] = Array.isArray(content.gallery)
     ? content.gallery
         .map((item): PitlaneGalleryItem => ({
           url: item.url ?? '',
@@ -269,6 +300,9 @@ export function buildPitlaneContent(content: SiteContent): PitlanePageContent {
         .filter((item): boolean => item.url.length > 0)
         .slice(0, 8)
     : []
+  const gallery: PitlaneGalleryItem[] = galleryFromContent.length
+    ? galleryFromContent
+    : [...defaults.images.gallery]
 
   const services: PitlaneServiceItem[] = servicesRaw.map(
     (service: PitlaneServiceItem, index: number): PitlaneServiceItem => {
@@ -336,8 +370,8 @@ export function buildPitlaneContent(content: SiteContent): PitlanePageContent {
     phone: content.phone ?? '',
     email: content.email ?? '',
     about: content.about ?? '',
-    heroImage: content.heroImage ?? '',
-    aboutImage: content.aboutImage ?? '',
+    heroImage: content.heroImage || defaults.images.hero,
+    aboutImage: content.aboutImage || defaults.images.about,
     aboutSecondaryImage:
       gallery[1]?.url || gallery[0]?.url || content.heroImage || content.aboutImage || '',
     heroPoints: heroPointsFromContent.length ? heroPointsFromContent : [...defaults.heroPoints],

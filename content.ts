@@ -1,28 +1,24 @@
 import type { SiteContent } from './app/types/SiteContent'
 
-/** Images réelles du site public Automobiles du Landry (Rennes). */
-const landry = {
-  hero: 'https://www.garagedulandry.com/upload-slider_home/medium1920/slider.jpg',
-  about: 'https://www.garagedulandry.com/upload-settings/medium800/img-1.jpg',
-  service1: 'https://www.garagedulandry.com/upload-bloc_service/medium1200/img1.jpg',
-  service2: 'https://www.garagedulandry.com/upload-bloc_service/medium1200/img2.jpg',
-  service3: 'https://www.garagedulandry.com/upload-bloc_service/medium1200/services-1-1.jpeg',
-  parallax: 'https://www.garagedulandry.com/sx-content/uploads/cms/medium1920/parallax.jpg',
-  atelier: 'https://www.garagedulandry.com/upload-bloc_raison/medium1920/bg-centre.jpg',
-  stock:
-    'https://www.garagedulandry.com/upload-categorie_ref_prod/medium640/adobestock-342963007--1---1-.jpeg',
-  /** Fallback supplémentaire si une image atelier renvoie un blanc / 403 hotlink. */
-  unsplashShop:
+const demoImg = {
+  hero: 'https://images.unsplash.com/photo-1658244535411-92c887137240?auto=format&fit=crop&w=1600&q=80',
+  about:
+    'https://images.unsplash.com/photo-1613214150132-9606e332d68e?auto=format&fit=crop&w=1200&q=80',
+  service1:
     'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1200&q=80',
-  unsplashBay:
+  service2:
     'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=1200&q=80',
+  service3:
+    'https://images.unsplash.com/photo-1637640125496-31852f042a60?auto=format&fit=crop&w=1200&q=80',
+  parallax:
+    'https://images.unsplash.com/photo-1723099971299-3789db53604c?auto=format&fit=crop&w=1600&q=80',
+  atelier:
+    'https://images.unsplash.com/photo-1711386689622-1cda23e10217?auto=format&fit=crop&w=1200&q=80',
+  stock:
+    'https://images.unsplash.com/photo-1735361039382-d78a0a0cc185?auto=format&fit=crop&w=1200&q=80',
 }
 
-/**
- * Mock SiteContent — Automobiles du Landry (Rennes).
- * Infos publiques : site garagedulandry.com / réseau AD Expert.
- * Photos : images hébergées sur le site du garage (aperçu démo uniquement).
- */
+/** Mock SiteContent — Automobiles du Landry (Rennes) : fixture d'aperçu `.playground`. */
 export const mockSiteContent: SiteContent = {
   businessName: 'Automobiles du Landry',
   subtitle:
@@ -49,9 +45,8 @@ export const mockSiteContent: SiteContent = {
   faqHeading: 'Avant de déposer votre voiture',
   aboutHeading: 'Notre réputation parle pour nous',
   contactHeading: 'Prendre rendez-vous',
-  // Photo atelier (plus cohérente que le slider commercial) pour le hero
-  heroImage: landry.parallax,
-  aboutImage: landry.about,
+  heroImage: demoImg.hero,
+  aboutImage: demoImg.about,
   palette: {
     primary: '#E11D2E',
     secondary: '#0C0C0D',
@@ -96,14 +91,12 @@ export const mockSiteContent: SiteContent = {
     },
   ],
   gallery: [
-    { url: landry.service1, alt: 'Atelier mécanique — révision véhicule' },
-    { url: landry.service2, alt: 'Intervention carrosserie' },
-    { url: landry.service3, alt: 'Prestations entretien automobile' },
-    { url: landry.parallax, alt: 'Espace atelier du garage' },
-    { url: landry.unsplashShop, alt: 'Poste de travail mécanicien' },
-    { url: landry.about, alt: 'Accueil Automobiles du Landry' },
-    { url: landry.unsplashBay, alt: 'Baie de réparation véhicule' },
-    { url: landry.stock, alt: 'Véhicule en atelier' },
+    { url: demoImg.service1, alt: 'Distribution moteur — courroie et poulies' },
+    { url: demoImg.service2, alt: 'Intervention mécanique sur moteur' },
+    { url: demoImg.service3, alt: 'Outillage d’atelier' },
+    { url: demoImg.parallax, alt: 'Véhicule sur pont élévateur' },
+    { url: demoImg.atelier, alt: 'Réparation sous véhicule' },
+    { url: demoImg.stock, alt: 'Atelier mécanique équipé' },
   ],
   reviews: [
     {
