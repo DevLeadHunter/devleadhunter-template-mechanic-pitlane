@@ -71,8 +71,11 @@
         :business-name="page.businessName"
         :city="page.city"
         :area="page.area"
+        :address="page.address"
         :phone="page.phone"
-        :email="page.email" />
+        :email="page.email"
+        :lat="page.lat"
+        :lng="page.lng" />
     </main>
 
     <FooterSection :page="page" />

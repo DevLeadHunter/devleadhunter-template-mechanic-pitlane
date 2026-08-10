@@ -95,6 +95,9 @@ export interface PitlanePageContent {
   contactHeading: string
   openingHours: PitlaneHoursItem[]
   zones: string[]
+  address: string
+  lat: number
+  lng: number
 }
 
 const defaults = {
@@ -258,12 +261,19 @@ function resolveText(value: string | undefined, fallback: string): string {
   return typeof value === 'string' && value.trim().length > 0 ? value : fallback
 }
 
+/** `SiteContent` + l'adresse rue et les coordonnées carte injectées par l'API, absentes du contrat partagé. */
+type PitlaneContentInput = SiteContent & {
+  address?: string
+  lat?: number | null
+  lng?: number | null
+}
+
 /**
  * Construit le contenu de page prêt pour le rendu.
  * @param content Données variables du prospect (`SiteContent`)
  * @returns Contenu typé Pitlane
  */
-export function buildPitlaneContent(content: SiteContent): PitlanePageContent {
+export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageContent {
   const palette = content.palette ?? {}
 
   const trustFromContent: PitlaneTrustItem[] = Array.isArray(content.trustItems)
@@ -306,10 +316,13 @@ export function buildPitlaneContent(content: SiteContent): PitlanePageContent {
 
   const services: PitlaneServiceItem[] = servicesRaw.map(
     (service: PitlaneServiceItem, index: number): PitlaneServiceItem => {
-      const fromGallery = gallery.length > 0 ? gallery[index % gallery.length]?.url : ''
+      // Une image distincte par carte : photo réelle à cet index, sinon un défaut du template — jamais le cycle « % length » qui répétait une photo partout.
+      const realImage: string = galleryFromContent[index]?.url ?? ''
+      const fallbackImage: string =
+        defaults.images.gallery[index % defaults.images.gallery.length]?.url ?? ''
       return {
         ...service,
-        image: fromGallery || content.heroImage || content.aboutImage || '',
+        image: realImage || fallbackImage,
       }
     },
   )
@@ -395,5 +408,8 @@ export function buildPitlaneContent(content: SiteContent): PitlanePageContent {
     contactHeading: resolveText(content.contactHeading, defaults.contactHeading),
     openingHours,
     zones,
+    address: typeof content.address === 'string' ? content.address.trim() : '',
+    lat: typeof content.lat === 'number' ? content.lat : 0,
+    lng: typeof content.lng === 'number' ? content.lng : 0,
   }
 }

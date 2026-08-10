@@ -15,7 +15,7 @@
           class="pit-map__contacts"
           data-pit-reveal>
           <div
-            v-if="area || city"
+            v-if="addressLines.length"
             class="pit-map__contact-row">
             <span
               class="pit-map__contact-icon"
@@ -30,9 +30,11 @@
             <div class="pit-map__contact-body">
               <span class="pit-map__contact-label">Adresse</span>
               <span class="pit-map__contact-value">
-                <template v-if="area">{{ area }}</template>
-                <template v-if="area && city"><br /></template>
-                <template v-if="city">{{ city }}</template>
+                <template
+                  v-for="(line, index) in addressLines"
+                  :key="index">
+                  <br v-if="index > 0" />{{ line }}
+                </template>
               </span>
             </div>
           </div>
@@ -96,15 +98,13 @@
               :src="embedUrl"></iframe>
 
             <div
-              v-if="businessName || area"
+              v-if="businessName || addressLines.length"
               class="pit-map__card">
               <p class="pit-map__card-name">{{ businessName || 'Garage' }}</p>
               <p
-                v-if="area || city"
+                v-if="addressLines.length"
                 class="pit-map__card-addr">
-                <template v-if="area">{{ area }}</template>
-                <template v-if="area && city">, </template>
-                <template v-if="city">{{ city }}</template>
+                {{ addressLines.join(', ') }}
               </p>
             </div>
 
@@ -140,6 +140,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  address: {
+    type: String,
+    default: '',
+  },
   phone: {
     type: String,
     default: '',
@@ -150,16 +154,26 @@ const props = defineProps({
   },
   lat: {
     type: Number,
-    default: 48.1028,
+    default: 0,
   },
   lng: {
     type: Number,
-    default: -1.6438,
+    default: 0,
   },
 })
 
+/** Adresse rue si dispo, sinon la zone d'intervention seule (jamais la ville en double). */
+const addressLines: ComputedRef<string[]> = computed((): string[] => {
+  const street: string = props.address.trim()
+  if (street) {
+    return [street, props.city.trim()].filter((part: string): boolean => part.length > 0)
+  }
+  const zone: string = props.area.trim() || props.city.trim()
+  return zone ? [zone] : []
+})
+
 const query: ComputedRef<string> = computed((): string => {
-  const parts: string[] = [props.area, props.city, props.businessName].filter(
+  const parts: string[] = [props.address || props.area, props.city, props.businessName].filter(
     (part: string): boolean => part.trim().length > 0,
   )
   return parts.join(', ') || `${props.lat},${props.lng}`
@@ -170,13 +184,17 @@ const mapsUrl: ComputedRef<string> = computed(
     `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query.value)}`,
 )
 
+const hasCoordinates: ComputedRef<boolean> = computed(
+  (): boolean =>
+    Number.isFinite(props.lat) &&
+    Number.isFinite(props.lng) &&
+    (props.lat !== 0 || props.lng !== 0),
+)
+
+// Embed Google Maps sur les vraies coords/adresse (l'embed OSM bbox centrait sur un défaut et bloquait le dézoom).
 const embedUrl: ComputedRef<string> = computed((): string => {
-  const delta = 0.01
-  const left = props.lng - delta
-  const right = props.lng + delta
-  const top = props.lat + delta
-  const bottom = props.lat - delta
-  return `https://www.openstreetmap.org/export/embed.html?bbox=${left}%2C${bottom}%2C${right}%2C${top}&layer=mapnik&marker=${props.lat}%2C${props.lng}`
+  const target: string = hasCoordinates.value ? `${props.lat},${props.lng}` : query.value
+  return `https://maps.google.com/maps?q=${encodeURIComponent(target)}&z=15&hl=fr&output=embed`
 })
 </script>
 
