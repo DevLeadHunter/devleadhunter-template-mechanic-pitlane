@@ -30,9 +30,14 @@
     </header>
 
     <main id="top">
-      <HeroSection :page="page" />
-      <TrustSection :items="page.trustItems" />
+      <HeroSection
+        v-bind="editableAttrs(props.content._editable?.hero)"
+        :page="page" />
+      <TrustSection
+        v-bind="editableAttrs(props.content._editable?.trust)"
+        :items="page.trustItems" />
       <ServicesSection
+        v-bind="editableAttrs(props.content._editable?.services)"
         :heading="page.servicesHeading"
         :services="page.services" />
       <WhySection
@@ -40,6 +45,7 @@
         :items="page.whyItems" />
       <AboutSection
         v-if="page.about"
+        v-bind="editableAttrs(props.content._editable?.about)"
         :heading="page.aboutHeading"
         :text="page.about"
         :image="page.aboutImage"
@@ -48,6 +54,7 @@
         :cta-label="page.ctaQuoteLabel" />
       <GallerySection
         v-if="page.gallery.length"
+        v-bind="editableAttrs(props.content._editable?.gallery)"
         :heading="page.galleryHeading"
         :items="page.gallery" />
       <ProcessSection
@@ -55,6 +62,7 @@
         :items="page.processItems" />
       <ReviewsSection
         v-if="page.reviews.length"
+        v-bind="editableAttrs(props.content._editable?.reviews)"
         :heading="page.reviewsHeading"
         :reviews="page.reviews" />
       <AppointmentSection
@@ -64,6 +72,7 @@
         :service-titles="page.services.map((service) => service.title)" />
       <FaqSection
         v-if="page.faq.length"
+        v-bind="editableAttrs(props.content._editable?.faq)"
         :heading="page.faqHeading"
         :items="page.faq"
         :image="page.faqImage" />
@@ -78,7 +87,9 @@
         :lng="page.lng" />
     </main>
 
-    <FooterSection :page="page" />
+    <FooterSection
+      v-bind="editableAttrs(props.content._editable?.contact)"
+      :page="page" />
 
     <div
       v-if="page.phone"
@@ -108,6 +119,7 @@
  */
 import type { ComputedRef, PropType, Ref } from 'vue'
 import type { SiteContent } from '~/types/SiteContent'
+import { editableAttrs } from '@devleadhunter/website-content'
 import { buildPitlaneContent } from '~/types/pitlane'
 import type { PitlanePageContent } from '~/types/pitlane'
 import HeroSection from './sections/HeroSection.vue'
