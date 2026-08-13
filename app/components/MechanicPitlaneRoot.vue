@@ -8,9 +8,14 @@
       <div class="pit-container pit-header__inner">
         <a
           href="#top"
-          class="pit-logo"
-          >{{ page.businessName || 'Garage' }}</a
-        >
+          class="pit-logo">
+          <img
+            v-if="page.logo"
+            :src="page.logo"
+            alt=""
+            class="pit-logo__img" />
+          <span class="pit-logo__name">{{ page.businessName || 'Garage' }}</span>
+        </a>
         <nav
           class="pit-nav"
           aria-label="Navigation">
@@ -405,6 +410,9 @@ useHead({
 }
 
 .pit-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
   font-family: var(--pit-font-pitlane-display);
   font-weight: 800;
   font-size: clamp(0.78rem, 3.4vw, 1.05rem);
@@ -412,10 +420,21 @@ useHead({
   text-transform: uppercase;
   text-decoration: none;
   color: var(--pit-ink);
+  max-width: min(62vw, 16rem);
+}
+
+.pit-logo__img {
+  height: 2rem;
+  width: auto;
+  max-width: 2.75rem;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.pit-logo__name {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: min(62vw, 14rem);
   line-height: 1.25;
 }
 

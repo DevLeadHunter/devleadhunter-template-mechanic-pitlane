@@ -64,6 +64,7 @@ export interface PitlaneHoursItem {
 export interface PitlanePageContent {
   theme: PitlaneTheme
   businessName: string
+  logo: string
   badge: string
   subtitle: string
   city: string
@@ -376,6 +377,7 @@ export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageCo
           : pitlaneDefaultTheme.accent,
     },
     businessName: content.businessName ?? '',
+    logo: typeof content.logo === 'string' ? content.logo.trim() : '',
     badge: resolveText(content.heroBadge, defaults.badge),
     subtitle: resolveText(content.subtitle, defaults.subtitle),
     city: content.city ?? '',
