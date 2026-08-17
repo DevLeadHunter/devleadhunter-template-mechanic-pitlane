@@ -152,7 +152,7 @@ const defaults = {
     {
       title: 'Tarifs compétitifs',
       description:
-        'Devis transparent avant réparation. Pas de surprise sur la facture — le prix annoncé est le prix payé.',
+        'Devis transparent avant réparation. Pas de surprise sur la facture : le devis validé, c’est le prix final.',
     },
     {
       title: 'Service rapide & efficace',
