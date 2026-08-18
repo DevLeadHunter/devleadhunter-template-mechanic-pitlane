@@ -298,6 +298,7 @@ export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageCo
           .map((service): PitlaneServiceItem => ({
             title: service.title ?? '',
             description: service.description ?? '',
+            image: typeof service.image === 'string' ? service.image : '',
           }))
           .filter((service): boolean => service.title.length > 0)
       : [...defaults.services]
@@ -317,13 +318,14 @@ export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageCo
 
   const services: PitlaneServiceItem[] = servicesRaw.map(
     (service: PitlaneServiceItem, index: number): PitlaneServiceItem => {
-      // Une image distincte par carte : photo réelle à cet index, sinon un défaut du template — jamais le cycle « % length » qui répétait une photo partout.
+      // Une image distincte par carte : photo éditée dans le CMS d'abord, sinon photo réelle à cet index, sinon un défaut du template — jamais le cycle « % length » qui répétait une photo partout.
+      const cmsImage: string = typeof service.image === 'string' ? service.image.trim() : ''
       const realImage: string = galleryFromContent[index]?.url ?? ''
       const fallbackImage: string =
         defaults.images.gallery[index % defaults.images.gallery.length]?.url ?? ''
       return {
         ...service,
-        image: realImage || fallbackImage,
+        image: cmsImage || realImage || fallbackImage,
       }
     },
   )
@@ -388,7 +390,12 @@ export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageCo
     heroImage: content.heroImage || defaults.images.hero,
     aboutImage: content.aboutImage || defaults.images.about,
     aboutSecondaryImage:
-      gallery[1]?.url || gallery[0]?.url || content.heroImage || content.aboutImage || '',
+      content.images?.aboutSecondary ||
+      gallery[1]?.url ||
+      gallery[0]?.url ||
+      content.heroImage ||
+      content.aboutImage ||
+      '',
     heroPoints: heroPointsFromContent.length ? heroPointsFromContent : [...defaults.heroPoints],
     ctaCallLabel: resolveText(content.ctaCallLabel, defaults.ctaCallLabel),
     ctaQuoteLabel: resolveText(content.ctaQuoteLabel, defaults.ctaQuoteLabel),
@@ -406,7 +413,8 @@ export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageCo
     reviews,
     faqHeading: resolveText(content.faqHeading, defaults.faqHeading),
     faq,
-    faqImage: content.aboutImage || gallery[0]?.url || content.heroImage || '',
+    faqImage:
+      content.images?.faq || content.aboutImage || gallery[0]?.url || content.heroImage || '',
     contactHeading: resolveText(content.contactHeading, defaults.contactHeading),
     openingHours,
     zones,
