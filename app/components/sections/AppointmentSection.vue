@@ -45,13 +45,13 @@
               autocomplete="email"
               placeholder="Email" />
           </label>
-          <label class="pit-field pit-field--icon">
+          <label class="pit-field">
             <span class="sr-only">Date souhaitée</span>
             <input
               v-model="form.date"
-              type="date"
+              type="text"
               name="date"
-              placeholder="Date" />
+              placeholder="Date souhaitée" />
           </label>
         </div>
 
