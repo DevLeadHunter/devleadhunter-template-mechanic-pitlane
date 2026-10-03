@@ -13,6 +13,11 @@
         <p class="pit-trust__label">{{ item.label }}</p>
       </div>
     </div>
+    <p
+      v-if="professionalLicense"
+      class="pit-container pit-trust__license">
+      {{ professionalLicense }}
+    </p>
   </section>
 </template>
 
@@ -24,6 +29,10 @@ defineProps({
   items: {
     type: Array as PropType<PitlaneTrustItem[]>,
     required: true,
+  },
+  professionalLicense: {
+    type: String,
+    default: '',
   },
 })
 </script>
@@ -57,6 +66,16 @@ defineProps({
   letter-spacing: -0.02em;
   line-height: 1;
   color: #fff;
+}
+
+.pit-trust__license {
+  margin: 1.5rem auto 0;
+  color: #9a9a9a;
+  font-family: var(--pit-font-pitlane-sans);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
 }
 
 .pit-trust__label {

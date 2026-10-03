@@ -61,6 +61,7 @@
 
     <div class="pit-container pit-footer__bottom">
       <p>© {{ year }} {{ page.businessName }} — Tous droits réservés</p>
+      <p v-if="page.professionalLicense">{{ page.professionalLicense }}</p>
       <p v-if="page.zones.length">Zone : {{ page.zones.join(' · ') }}</p>
     </div>
   </footer>

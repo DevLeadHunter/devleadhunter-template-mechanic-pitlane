@@ -5,6 +5,7 @@
  * `SiteContent` typé et possède sa copie éditoriale (défauts métier garage).
  */
 import type { SiteContent } from '~/types/SiteContent'
+import { professionalLicenseLine } from '@devleadhunter/website-content'
 
 export interface PitlaneTheme {
   primary: string
@@ -96,6 +97,7 @@ export interface PitlanePageContent {
   contactHeading: string
   openingHours: PitlaneHoursItem[]
   zones: string[]
+  professionalLicense: string
   address: string
   lat: number
   lng: number
@@ -418,6 +420,7 @@ export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageCo
     contactHeading: resolveText(content.contactHeading, defaults.contactHeading),
     openingHours,
     zones,
+    professionalLicense: professionalLicenseLine(content),
     address: typeof content.address === 'string' ? content.address.trim() : '',
     lat: typeof content.lat === 'number' ? content.lat : 0,
     lng: typeof content.lng === 'number' ? content.lng : 0,

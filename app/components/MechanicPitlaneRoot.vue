@@ -40,7 +40,8 @@
         :page="page" />
       <TrustSection
         v-bind="editableAttrs(props.content._editable?.trust)"
-        :items="page.trustItems" />
+        :items="page.trustItems"
+        :professional-license="page.professionalLicense" />
       <ServicesSection
         v-bind="editableAttrs(props.content._editable?.services)"
         :heading="page.servicesHeading"
