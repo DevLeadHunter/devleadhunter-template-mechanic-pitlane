@@ -55,10 +55,13 @@
           </label>
         </div>
 
-        <div class="pit-book__plate-row">
+        <div
+          class="pit-book__plate-row"
+          :class="{ 'pit-book__plate-row--single': !usesFrenchPlates }">
           <label class="pit-field pit-field--grow">
             <span class="sr-only">Immatriculation</span>
             <input
+              v-if="usesFrenchPlates"
               :value="form.plate"
               type="text"
               name="plate"
@@ -68,8 +71,17 @@
               spellcheck="false"
               @input="handlePlateInput"
               @keydown.enter.prevent="lookupPlate" />
+            <input
+              v-else
+              v-model="form.plate"
+              type="text"
+              name="plate"
+              placeholder="Immatriculation"
+              autocomplete="off"
+              spellcheck="false" />
           </label>
           <button
+            v-if="usesFrenchPlates"
             type="button"
             class="pit-btn pit-btn--red pit-book__lookup"
             :disabled="plateLoading || form.plate.replace(/[^a-zA-Z0-9]/g, '').length < 7"
@@ -172,6 +184,11 @@ const props = defineProps({
 })
 
 const emailLabel: ComputedRef<string> = computed((): string => regionalLabel(props, 'Email'))
+
+const usesFrenchPlates: ComputedRef<boolean> = computed((): boolean => {
+  const country: string = props.country.trim().toUpperCase()
+  return country === '' || country === 'FR'
+})
 
 const serviceOptions: ComputedRef<string[]> = computed((): string[] => {
   if (props.serviceTitles.length) {
@@ -418,6 +435,10 @@ function onSubmit(): void {
   .pit-book__plate-row {
     grid-template-columns: 1fr auto;
     align-items: stretch;
+  }
+
+  .pit-book__plate-row--single {
+    grid-template-columns: 1fr;
   }
 }
 

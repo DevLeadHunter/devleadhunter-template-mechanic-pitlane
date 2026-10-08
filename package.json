@@ -2,7 +2,7 @@
   "name": "devleadhunter-template-mechanic-pitlane",
   "type": "module",
   "private": true,
-  "version": "1.4.1",
+  "version": "1.4.2",
   "main": "./nuxt.config.ts",
   "scripts": {
     "dev": "nuxi dev .playground",
