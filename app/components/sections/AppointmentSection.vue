@@ -37,13 +37,13 @@
               placeholder="Téléphone" />
           </label>
           <label class="pit-field">
-            <span class="sr-only">Email</span>
+            <span class="sr-only">{{ emailLabel }}</span>
             <input
               v-model="form.email"
               type="email"
               name="email"
               autocomplete="email"
-              placeholder="Email" />
+              :placeholder="emailLabel" />
           </label>
           <label class="pit-field">
             <span class="sr-only">Date souhaitée</span>
@@ -146,6 +146,7 @@
 
 <script lang="ts" setup>
 import type { ComputedRef, PropType, Ref } from 'vue'
+import { regionalLabel } from '@devleadhunter/website-content'
 
 const props = defineProps({
   phone: {
@@ -160,11 +161,17 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  country: {
+    type: String,
+    default: '',
+  },
   serviceTitles: {
     type: Array as PropType<string[]>,
     default: (): string[] => [],
   },
 })
+
+const emailLabel: ComputedRef<string> = computed((): string => regionalLabel(props, 'Email'))
 
 const serviceOptions: ComputedRef<string[]> = computed((): string[] => {
   if (props.serviceTitles.length) {
@@ -295,7 +302,7 @@ function onSubmit(): void {
   const lines: string[] = [
     `Nom : ${form.name}`,
     `Téléphone : ${form.phone}`,
-    form.email ? `Email : ${form.email}` : '',
+    form.email ? `${regionalLabel(props, 'Email :')} ${form.email}` : '',
     form.date ? `Date souhaitée : ${form.date}` : '',
     form.plate ? `Immatriculation : ${form.plate}` : '',
     `Véhicule : ${[form.make, form.model, form.year, form.fuel].filter(Boolean).join(' ')}`,
@@ -305,7 +312,7 @@ function onSubmit(): void {
   const target: string = props.email || ''
   if (target) {
     window.location.href = `mailto:${encodeURIComponent(target)}?subject=${encodeURIComponent(
-      `Demande de RDV — ${form.make} ${form.model}`,
+      `Demande de RDV : ${form.make} ${form.model}`,
     )}&body=${encodeURIComponent(lines.join('\n'))}`
   } else if (props.phone) {
     window.location.href = `tel:${props.phone}`

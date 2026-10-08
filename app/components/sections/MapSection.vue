@@ -76,7 +76,7 @@
               </svg>
             </span>
             <div class="pit-map__contact-body">
-              <span class="pit-map__contact-label">Email</span>
+              <span class="pit-map__contact-label">{{ emailLabel }}</span>
               <a
                 :href="`mailto:${email}`"
                 class="pit-map__contact-value pit-map__contact-link"
@@ -126,6 +126,7 @@
 
 <script lang="ts" setup>
 import type { ComputedRef } from 'vue'
+import { regionalLabel } from '@devleadhunter/website-content'
 
 const props = defineProps({
   businessName: {
@@ -152,6 +153,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  country: {
+    type: String,
+    default: '',
+  },
   lat: {
     type: Number,
     default: 0,
@@ -161,6 +166,8 @@ const props = defineProps({
     default: 0,
   },
 })
+
+const emailLabel: ComputedRef<string> = computed((): string => regionalLabel(props, 'Email'))
 
 /** Adresse rue si dispo, sinon la zone d'intervention seule (jamais la ville en double). */
 const addressLines: ComputedRef<string[]> = computed((): string[] => {

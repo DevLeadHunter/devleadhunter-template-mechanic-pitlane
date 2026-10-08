@@ -60,7 +60,7 @@
     </div>
 
     <div class="pit-container pit-footer__bottom">
-      <p>© {{ year }} {{ page.businessName }} — Tous droits réservés</p>
+      <p>{{ copyrightLine(page.businessName) }}</p>
       <p v-if="page.professionalLicense">{{ page.professionalLicense }}</p>
       <p v-if="page.zones.length">Zone : {{ page.zones.join(' · ') }}</p>
     </div>
@@ -78,7 +78,20 @@ defineProps({
   },
 })
 
+const FINAL_PUNCTUATION: RegExp = /[.!?]$/
+
 const year: number = new Date().getFullYear()
+
+/**
+ * Mention de copyright du bas de page, sans point doublé derrière un nom qui finit déjà par un (« Garage Exemple inc. »).
+ * @param businessName Nom de l'entreprise
+ * @returns La mention « © 2026 Nom. Tous droits réservés. »
+ */
+function copyrightLine(businessName: string): string {
+  const owner: string = `© ${year} ${businessName}`.trim()
+  const ownerSentence: string = FINAL_PUNCTUATION.test(owner) ? owner : `${owner}.`
+  return `${ownerSentence} Tous droits réservés.`
+}
 </script>
 
 <style scoped>

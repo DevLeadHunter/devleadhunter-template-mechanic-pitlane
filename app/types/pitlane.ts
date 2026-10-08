@@ -5,7 +5,7 @@
  * `SiteContent` typé et possède sa copie éditoriale (défauts métier garage).
  */
 import type { SiteContent } from '~/types/SiteContent'
-import { professionalLicenseLine } from '@devleadhunter/website-content'
+import { professionalLicenseLine, regionalLabel } from '@devleadhunter/website-content'
 
 export interface PitlaneTheme {
   primary: string
@@ -72,6 +72,7 @@ export interface PitlanePageContent {
   area: string
   phone: string
   email: string
+  country: string
   about: string
   heroImage: string
   aboutImage: string
@@ -106,7 +107,7 @@ export interface PitlanePageContent {
 const defaults = {
   badge: 'Garage multi-marques',
   subtitle:
-    'Entretien, diagnostic et réparations — un atelier de confiance, devis avant intervention.',
+    'Entretien, diagnostic et réparations : un atelier de confiance, devis avant intervention.',
   ctaCallLabel: 'Appeler l’atelier',
   ctaQuoteLabel: 'Prendre rendez-vous',
   heroPoints: ['Devis avant réparation', 'Toutes marques', 'Pièces garanties'] as string[],
@@ -126,7 +127,7 @@ const defaults = {
     {
       title: 'Diagnostic électronique',
       description:
-        'Valise multi-marques, lecture des défauts, recherche de panne. Le devis part du diagnostic — pas l’inverse.',
+        'Valise multi-marques, lecture des défauts, recherche de panne. Le devis part du diagnostic, pas l’inverse.',
     },
     {
       title: 'Freinage & trains roulants',
@@ -136,12 +137,12 @@ const defaults = {
     {
       title: 'Distribution & mécanique',
       description:
-        'Courroie / chaîne, pompe à eau, embrayage, joints — interventions planifiées avec devis ferme et délai clair.',
+        'Courroie / chaîne, pompe à eau, embrayage, joints : interventions planifiées avec devis ferme et délai clair.',
     },
     {
       title: 'Pneus & géométrie',
       description:
-        'Montage, équilibrage, crevaison, conseil usure. On vous dit quand le pneu peut encore rouler — et quand non.',
+        'Montage, équilibrage, crevaison, conseil usure. On vous dit quand le pneu peut encore rouler, et quand non.',
     },
     {
       title: 'Carrosserie légère',
@@ -208,7 +209,7 @@ const defaults = {
     {
       question: 'Le devis est-il gratuit ?',
       answer:
-        'Le devis de réparation est établi après diagnostic. On vous l’explique clairement avant toute intervention — rien n’est lancé sans votre accord.',
+        'Le devis de réparation est établi après diagnostic. On vous l’explique clairement avant toute intervention. Rien n’est lancé sans votre accord.',
     },
     {
       question: 'Intervenez-vous sur toutes les marques ?',
@@ -229,7 +230,7 @@ const defaults = {
     gallery: [
       {
         url: 'https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1200&q=80',
-        alt: 'Distribution moteur — courroie et poulies',
+        alt: 'Distribution moteur : courroie et poulies',
       },
       {
         url: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=1200&q=80',
@@ -303,7 +304,10 @@ export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageCo
             image: typeof service.image === 'string' ? service.image : '',
           }))
           .filter((service): boolean => service.title.length > 0)
-      : [...defaults.services]
+      : defaults.services.map((service: PitlaneServiceItem): PitlaneServiceItem => ({
+          title: regionalLabel(content, service.title),
+          description: regionalLabel(content, service.description),
+        }))
 
   const galleryFromContent: PitlaneGalleryItem[] = Array.isArray(content.gallery)
     ? content.gallery
@@ -350,7 +354,10 @@ export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageCo
             answer: item.answer ?? '',
           }))
           .filter((item): boolean => item.question.length > 0 && item.answer.length > 0)
-      : [...defaults.faq]
+      : defaults.faq.map((item: PitlaneFaqItem): PitlaneFaqItem => ({
+          question: regionalLabel(content, item.question),
+          answer: regionalLabel(content, item.answer),
+        }))
 
   const openingHours: PitlaneHoursItem[] = Array.isArray(content.openingHours)
     ? content.openingHours
@@ -383,11 +390,12 @@ export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageCo
     businessName: content.businessName ?? '',
     logo: typeof content.logo === 'string' ? content.logo.trim() : '',
     badge: resolveText(content.heroBadge, defaults.badge),
-    subtitle: resolveText(content.subtitle, defaults.subtitle),
+    subtitle: resolveText(content.subtitle, regionalLabel(content, defaults.subtitle)),
     city: content.city ?? '',
     area: content.area ?? '',
     phone: content.phone ?? '',
     email: content.email ?? '',
+    country: content.country ?? '',
     about: content.about ?? '',
     heroImage: content.heroImage || defaults.images.hero,
     aboutImage: content.aboutImage || defaults.images.about,
@@ -398,19 +406,28 @@ export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageCo
       content.heroImage ||
       content.aboutImage ||
       '',
-    heroPoints: heroPointsFromContent.length ? heroPointsFromContent : [...defaults.heroPoints],
+    heroPoints: heroPointsFromContent.length
+      ? heroPointsFromContent
+      : defaults.heroPoints.map((point: string): string => regionalLabel(content, point)),
     ctaCallLabel: resolveText(content.ctaCallLabel, defaults.ctaCallLabel),
     ctaQuoteLabel: resolveText(content.ctaQuoteLabel, defaults.ctaQuoteLabel),
     trustItems: trustFromContent.length ? trustFromContent : [...defaults.trustItems],
     servicesHeading: resolveText(content.servicesHeading, defaults.servicesHeading),
     services,
     whyHeading: defaults.whyHeading,
-    whyItems: [...defaults.whyItems],
+    whyItems: defaults.whyItems.map((item: PitlaneWhyItem): PitlaneWhyItem => ({
+      title: regionalLabel(content, item.title),
+      description: regionalLabel(content, item.description),
+    })),
     aboutHeading: resolveText(content.aboutHeading, defaults.aboutHeading),
     galleryHeading: resolveText(content.galleryHeading, defaults.galleryHeading),
     gallery,
     processHeading: defaults.processHeading,
-    processItems: [...defaults.processItems],
+    processItems: defaults.processItems.map((item: PitlaneProcessItem): PitlaneProcessItem => ({
+      step: item.step,
+      title: regionalLabel(content, item.title),
+      description: regionalLabel(content, item.description),
+    })),
     reviewsHeading: resolveText(content.reviewsHeading, defaults.reviewsHeading),
     reviews,
     faqHeading: resolveText(content.faqHeading, defaults.faqHeading),

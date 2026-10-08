@@ -75,6 +75,7 @@
         :phone="page.phone"
         :email="page.email"
         :city="page.city"
+        :country="page.country"
         :service-titles="page.services.map((service) => service.title)" />
       <FaqSection
         v-if="page.faq.length"
@@ -89,6 +90,7 @@
         :address="page.address"
         :phone="page.phone"
         :email="page.email"
+        :country="page.country"
         :lat="page.lat"
         :lng="page.lng" />
     </main>

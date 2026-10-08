@@ -7,8 +7,12 @@
         <p class="pit-eyebrow">Contact</p>
         <h2 class="pit-heading">{{ page.contactHeading }}</h2>
         <p class="pit-lead pit-contact__lead">
-          Un entretien, un devis, une panne ? Appelez l'atelier ou écrivez — on vous répond
-          rapidement.
+          {{
+            regionalLabel(
+              page,
+              "Un entretien, un devis, une panne ? Appelez l'atelier ou écrivez : on vous répond rapidement.",
+            )
+          }}
         </p>
 
         <div class="pit-contact__actions">
@@ -16,7 +20,7 @@
             v-if="page.phone"
             :href="`tel:${page.phone}`"
             class="pit-btn pit-btn--red"
-            >{{ page.ctaCallLabel }} — {{ page.phone }}</a
+            >{{ page.ctaCallLabel }} : {{ page.phone }}</a
           >
           <a
             v-if="page.email"
@@ -43,6 +47,7 @@
 <script lang="ts" setup>
 import type { PropType } from 'vue'
 import type { PitlanePageContent } from '~/types/pitlane'
+import { regionalLabel } from '@devleadhunter/website-content'
 
 defineProps({
   page: {
