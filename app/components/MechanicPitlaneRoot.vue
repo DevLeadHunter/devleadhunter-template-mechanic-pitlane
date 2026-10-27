@@ -114,13 +114,13 @@
         :href="`tel:${page.phone}`"
         class="pit-btn pit-btn--red pit-mobile-bar__btn"
         :tabindex="showMobileBar ? 0 : -1"
-        >{{ page.ctaCallLabel }}</a
+        >{{ MOBILE_BAR_CALL_LABEL }}</a
       >
       <a
         href="#rdv"
         class="pit-btn pit-btn--ghost pit-mobile-bar__btn"
         :tabindex="showMobileBar ? 0 : -1"
-        >{{ page.ctaQuoteLabel }}</a
+        >{{ MOBILE_BAR_APPOINTMENT_LABEL }}</a
       >
     </div>
   </div>
@@ -155,6 +155,10 @@ const props = defineProps({
     required: true,
   },
 })
+
+/** Libellés de la barre fixe mobile : ceux du hero ne tiennent pas sur une ligne dans une demi-largeur de téléphone. */
+const MOBILE_BAR_CALL_LABEL: string = 'Appeler'
+const MOBILE_BAR_APPOINTMENT_LABEL: string = 'Rendez-vous'
 
 const rootRef: Ref<HTMLElement | null> = ref(null)
 const isReady: Ref<boolean> = ref(false)
@@ -533,6 +537,7 @@ useHead({
   width: 100%;
   padding: 0.8rem 0.6rem;
   font-size: 0.72rem;
+  white-space: nowrap;
 }
 
 @media (min-width: 640px) {
