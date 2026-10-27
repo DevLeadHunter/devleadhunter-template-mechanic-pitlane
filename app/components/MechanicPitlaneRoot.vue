@@ -22,7 +22,11 @@
           <a href="#services">Services</a>
           <a href="#atelier">Atelier</a>
           <a href="#rdv">RDV</a>
-          <a href="#avis">Avis</a>
+          <a
+            v-if="page.reviews.length"
+            href="#avis"
+            >Avis</a
+          >
           <a href="#localisation">Nous trouver</a>
         </nav>
         <a

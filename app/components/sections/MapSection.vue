@@ -172,15 +172,20 @@ const emailLabel: ComputedRef<string> = computed((): string => regionalLabel(pro
 /** Adresse rue si dispo, sinon la zone d'intervention seule (jamais la ville en double). */
 const addressLines: ComputedRef<string[]> = computed((): string[] => {
   const street: string = props.address.trim()
+  const city: string = props.city.trim()
   if (street) {
-    return [street, props.city.trim()].filter((part: string): boolean => part.length > 0)
+    const isCityInStreet: boolean = street
+      .toLocaleLowerCase('fr')
+      .includes(city.toLocaleLowerCase('fr'))
+    return city && !isCityInStreet ? [street, city] : [street]
   }
-  const zone: string = props.area.trim() || props.city.trim()
+  const zone: string = props.area.trim() || city
   return zone ? [zone] : []
 })
 
 const query: ComputedRef<string> = computed((): string => {
-  const parts: string[] = [props.address || props.area, props.city, props.businessName].filter(
+  const place: string[] = props.address.trim() ? addressLines.value : [props.area, props.city]
+  const parts: string[] = [...place, props.businessName].filter(
     (part: string): boolean => part.trim().length > 0,
   )
   return parts.join(', ') || `${props.lat},${props.lng}`

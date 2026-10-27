@@ -7,8 +7,8 @@
           v-if="page.area || page.city"
           class="pit-footer__text">
           <template v-if="page.area">{{ page.area }}</template>
-          <template v-if="page.area && page.city"><br /></template>
-          <template v-if="page.city">{{ page.city }}</template>
+          <template v-if="page.area && isCityShown"><br /></template>
+          <template v-if="isCityShown">{{ page.city }}</template>
         </p>
         <p
           v-if="page.phone"
@@ -27,7 +27,7 @@
         <ul class="pit-footer__links">
           <li><a href="#services">Services</a></li>
           <li><a href="#atelier">À propos</a></li>
-          <li><a href="#avis">Avis</a></li>
+          <li v-if="page.reviews.length"><a href="#avis">Avis</a></li>
           <li><a href="#rdv">Rendez-vous</a></li>
           <li><a href="#faq">FAQ</a></li>
           <li><a href="#localisation">Nous trouver</a></li>
@@ -68,10 +68,10 @@
 </template>
 
 <script lang="ts" setup>
-import type { PropType } from 'vue'
+import type { ComputedRef, PropType } from 'vue'
 import type { PitlanePageContent } from '~/types/pitlane'
 
-defineProps({
+const props = defineProps({
   page: {
     type: Object as PropType<PitlanePageContent>,
     required: true,
@@ -79,6 +79,14 @@ defineProps({
 })
 
 const FINAL_PUNCTUATION: RegExp = /[.!?]$/
+
+const isCityShown: ComputedRef<boolean> = computed((): boolean => {
+  const city: string = props.page.city.trim()
+  return (
+    city.length > 0 &&
+    !props.page.area.toLocaleLowerCase('fr').includes(city.toLocaleLowerCase('fr'))
+  )
+})
 
 const year: number = new Date().getFullYear()
 

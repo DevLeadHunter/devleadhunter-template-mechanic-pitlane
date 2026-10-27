@@ -432,8 +432,14 @@ export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageCo
     reviews,
     faqHeading: resolveText(content.faqHeading, defaults.faqHeading),
     faq,
+    // `faq` : ancien nom du champ, qui écrasait les questions dans l'éditeur (sites générés avant la v1.4.3).
     faqImage:
-      content.images?.faq || content.aboutImage || gallery[0]?.url || content.heroImage || '',
+      content.images?.faqImage ||
+      content.images?.faq ||
+      content.aboutImage ||
+      gallery[0]?.url ||
+      content.heroImage ||
+      '',
     contactHeading: resolveText(content.contactHeading, defaults.contactHeading),
     openingHours,
     zones,
