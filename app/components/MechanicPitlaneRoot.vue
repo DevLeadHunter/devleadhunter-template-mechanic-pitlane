@@ -436,6 +436,7 @@ useHead({
   text-decoration: none;
   color: var(--pit-ink);
   max-width: min(62vw, 16rem);
+  min-width: 0;
 }
 
 .pit-logo__img {
@@ -466,6 +467,7 @@ useHead({
   text-transform: uppercase;
   text-decoration: none;
   color: var(--pit-muted);
+  white-space: nowrap;
   transition: color 0.2s ease;
 }
 
@@ -475,22 +477,28 @@ useHead({
 
 .pit-header__cta {
   display: none;
+  flex-shrink: 0;
   padding: 0.55rem 1rem;
   font-size: 0.78rem;
+  white-space: nowrap;
 }
 
-@media (min-width: 768px) {
-  .pit-nav {
-    display: flex;
-  }
-
+@media (min-width: 640px) {
   .pit-header__cta {
     display: inline-flex;
   }
+}
 
+@media (min-width: 768px) {
   .pit-logo {
     max-width: none;
     font-size: 1.05rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .pit-nav {
+    display: flex;
   }
 }
 
