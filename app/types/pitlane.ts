@@ -62,6 +62,11 @@ export interface PitlaneHoursItem {
   hours: string
 }
 
+export type PitlaneSocialLink = {
+  network: string
+  url: string
+}
+
 export interface PitlanePageContent {
   theme: PitlaneTheme
   businessName: string
@@ -98,6 +103,7 @@ export interface PitlanePageContent {
   contactHeading: string
   openingHours: PitlaneHoursItem[]
   zones: string[]
+  socialLinks: PitlaneSocialLink[]
   professionalLicense: string
   address: string
   lat: number
@@ -265,6 +271,48 @@ function resolveText(value: string | undefined, fallback: string): string {
   return typeof value === 'string' && value.trim().length > 0 ? value : fallback
 }
 
+const WEEKDAYS: string[] = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
+
+type OpeningHoursGroup = {
+  firstDay: string
+  lastDay: string
+  dayCount: number
+  hours: string
+}
+
+/**
+ * Regroupe les jours qui se suivent dans la semaine avec les mêmes horaires (« lundi au vendredi »).
+ * @param rows Horaires jour par jour, dans l'ordre de la semaine
+ * @returns Une ligne par groupe de jours ; un jour inconnu reste seul sur sa ligne
+ */
+function groupOpeningHours(rows: PitlaneHoursItem[]): PitlaneHoursItem[] {
+  const groups: OpeningHoursGroup[] = []
+  rows.forEach((row: PitlaneHoursItem): void => {
+    const previousGroup: OpeningHoursGroup | undefined = groups[groups.length - 1]
+    const dayIndex: number = WEEKDAYS.indexOf(row.day.trim().toLocaleLowerCase('fr'))
+    const previousDayIndex: number = previousGroup
+      ? WEEKDAYS.indexOf(previousGroup.lastDay.trim().toLocaleLowerCase('fr'))
+      : -1
+    const followsPreviousDay: boolean =
+      dayIndex > 0 && previousDayIndex === dayIndex - 1 && previousGroup?.hours === row.hours.trim()
+
+    if (previousGroup && followsPreviousDay) {
+      previousGroup.lastDay = row.day
+      previousGroup.dayCount += 1
+      return
+    }
+
+    groups.push({ firstDay: row.day, lastDay: row.day, dayCount: 1, hours: row.hours.trim() })
+  })
+  return groups.map((group: OpeningHoursGroup): PitlaneHoursItem => ({
+    day:
+      group.dayCount === 1
+        ? group.firstDay
+        : `${group.firstDay} ${group.dayCount === 2 ? 'et' : 'au'} ${group.lastDay}`,
+    hours: group.hours,
+  }))
+}
+
 /** `SiteContent` + l'adresse rue et les coordonnées carte injectées par l'API, absentes du contrat partagé. */
 type PitlaneContentInput = SiteContent & {
   address?: string
@@ -360,16 +408,36 @@ export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageCo
         }))
 
   const openingHours: PitlaneHoursItem[] = Array.isArray(content.openingHours)
-    ? content.openingHours
-        .map((item): PitlaneHoursItem => ({
-          day: item.day ?? '',
-          hours: item.hours ?? '',
-        }))
-        .filter((item): boolean => item.day.length > 0)
+    ? groupOpeningHours(
+        content.openingHours
+          .map((item): PitlaneHoursItem => ({
+            day: item.day ?? '',
+            hours: item.hours ?? '',
+          }))
+          .filter((item): boolean => item.day.length > 0),
+      )
     : []
 
   const zones: string[] = Array.isArray(content.zones)
     ? content.zones.filter((zone): boolean => typeof zone === 'string' && zone.length > 0)
+    : []
+
+  const strengthsFromContent: PitlaneWhyItem[] = Array.isArray(content.strengths)
+    ? content.strengths
+        .map((strength): PitlaneWhyItem => ({
+          title: strength.title?.trim() ?? '',
+          description: strength.description?.trim() ?? '',
+        }))
+        .filter((strength): boolean => strength.title.length > 0)
+    : []
+
+  const socialLinks: PitlaneSocialLink[] = Array.isArray(content.social)
+    ? content.social
+        .map((link): PitlaneSocialLink => ({
+          network: link.network?.trim().toLowerCase() ?? '',
+          url: link.url?.trim() ?? '',
+        }))
+        .filter((link): boolean => link.network.length > 0 && /^https?:\/\//.test(link.url))
     : []
 
   return {
@@ -414,11 +482,13 @@ export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageCo
     trustItems: trustFromContent.length ? trustFromContent : [...defaults.trustItems],
     servicesHeading: resolveText(content.servicesHeading, defaults.servicesHeading),
     services,
-    whyHeading: defaults.whyHeading,
-    whyItems: defaults.whyItems.map((item: PitlaneWhyItem): PitlaneWhyItem => ({
-      title: regionalLabel(content, item.title),
-      description: regionalLabel(content, item.description),
-    })),
+    whyHeading: resolveText(content.strengthsHeading, defaults.whyHeading),
+    whyItems: strengthsFromContent.length
+      ? strengthsFromContent
+      : defaults.whyItems.map((item: PitlaneWhyItem): PitlaneWhyItem => ({
+          title: regionalLabel(content, item.title),
+          description: regionalLabel(content, item.description),
+        })),
     aboutHeading: resolveText(content.aboutHeading, defaults.aboutHeading),
     galleryHeading: resolveText(content.galleryHeading, defaults.galleryHeading),
     gallery,
@@ -443,6 +513,7 @@ export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageCo
     contactHeading: resolveText(content.contactHeading, defaults.contactHeading),
     openingHours,
     zones,
+    socialLinks,
     professionalLicense: professionalLicenseLine(content),
     address: typeof content.address === 'string' ? content.address.trim() : '',
     lat: typeof content.lat === 'number' ? content.lat : 0,

@@ -98,6 +98,10 @@ function initials(name: string): string {
   .pit-reviews__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .pit-review:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
 }
 
 .pit-review {

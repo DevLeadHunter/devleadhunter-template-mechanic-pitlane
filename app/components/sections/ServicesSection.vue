@@ -64,10 +64,12 @@ const props = defineProps({
   },
 })
 
+const MAXIMUM_VISIBLE_SERVICES: number = 9
+
 const broken: Ref<Set<number>> = ref(new Set())
 
 const visibleServices: ComputedRef<PitlaneServiceItem[]> = computed((): PitlaneServiceItem[] =>
-  props.services.slice(0, 6),
+  props.services.slice(0, MAXIMUM_VISIBLE_SERVICES),
 )
 
 /**
@@ -109,31 +111,36 @@ function onBroken(index: number): void {
 }
 
 .pit-services__rail {
-  display: grid;
-  gap: 1.25rem;
-  grid-template-columns: 1fr;
-}
+  --pit-services-gap: 1.25rem;
 
-@media (min-width: 700px) {
-  .pit-services__rail {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 1024px) {
-  .pit-services__rail {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--pit-services-gap);
 }
 
 .pit-service {
   display: flex;
   flex-direction: column;
+  flex: 0 0 100%;
+  min-width: 0;
   background: var(--pit-card);
   border: 1px solid var(--pit-line);
   border-radius: 0.85rem;
   overflow: hidden;
   transition: transform 0.25s ease;
+}
+
+@media (min-width: 700px) {
+  .pit-service {
+    flex-basis: calc((100% - var(--pit-services-gap)) / 2);
+  }
+}
+
+@media (min-width: 1024px) {
+  .pit-service {
+    flex-basis: calc((100% - 2 * var(--pit-services-gap)) / 3);
+  }
 }
 
 .pit-service:hover {
@@ -142,9 +149,15 @@ function onBroken(index: number): void {
 
 .pit-service__media {
   position: relative;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   background: #111;
+}
+
+@media (min-width: 700px) {
+  .pit-service__media {
+    aspect-ratio: 4 / 5;
+  }
 }
 
 .pit-service__media img,

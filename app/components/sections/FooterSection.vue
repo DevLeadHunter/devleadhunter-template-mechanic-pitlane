@@ -20,6 +20,24 @@
           class="pit-footer__text">
           <a :href="`mailto:${page.email}`">{{ page.email }}</a>
         </p>
+        <ul
+          v-if="page.socialLinks.length"
+          class="pit-footer__social">
+          <li
+            v-for="link in page.socialLinks"
+            :key="link.url">
+            <a
+              :href="link.url"
+              target="_blank"
+              rel="noopener"
+              class="pit-footer__social-link"
+              :aria-label="socialNetworkDisplay(link.network).label">
+              <span
+                aria-hidden="true"
+                v-html="socialNetworkDisplay(link.network).icon"></span>
+            </a>
+          </li>
+        </ul>
       </div>
 
       <div>
@@ -40,7 +58,7 @@
           v-if="page.openingHours.length"
           class="pit-footer__hours">
           <li
-            v-for="row in page.openingHours.slice(0, 6)"
+            v-for="row in page.openingHours"
             :key="row.day">
             <span>{{ row.day }}</span>
             <span>{{ row.hours }}</span>
@@ -78,7 +96,56 @@ const props = defineProps({
   },
 })
 
+type SocialNetworkDisplay = {
+  label: string
+  icon: string
+}
+
 const FINAL_PUNCTUATION: RegExp = /[.!?]$/
+
+const SOCIAL_NETWORK_DISPLAYS: Record<string, SocialNetworkDisplay> = {
+  facebook: {
+    label: 'Facebook',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M14.5 21v-7.5h2.6l.4-3.2h-3V8.4c0-.9.3-1.6 1.6-1.6h1.6V4a21 21 0 0 0-2.4-.1c-2.4 0-4 1.5-4 4.1v2.3H8.7v3.2h2.6V21"/></svg>',
+  },
+  instagram: {
+    label: 'Instagram',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="3.8"/><circle cx="17.3" cy="6.7" r="0.6" fill="currentColor"/></svg>',
+  },
+  whatsapp: {
+    label: 'WhatsApp',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 20.5l1.2-4.3A8.4 8.4 0 1 1 8 19.3z"/><path d="M9.2 8.6c.2-.5.5-.5.8-.5h.5c.2 0 .4.1.5.4l.7 1.6c.1.2 0 .5-.1.6l-.5.6c-.1.2-.1.4 0 .5.6 1 1.4 1.8 2.4 2.4.2.1.4.1.5 0l.6-.5c.2-.2.4-.2.6-.1l1.6.7c.3.1.4.3.4.5v.5c0 .3 0 .6-.5.8-.6.3-1.3.4-2 .2-2.6-.8-4.6-2.8-5.4-5.4-.2-.7-.1-1.4.2-2z"/></svg>',
+  },
+  youtube: {
+    label: 'YouTube',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="2.5" y="5.5" width="19" height="13" rx="3.5"/><path d="m10.2 9.3 4.6 2.7-4.6 2.7z"/></svg>',
+  },
+  tiktok: {
+    label: 'TikTok',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3.5v11a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 3.5c.4 2.4 2.3 4.3 4.7 4.6"/></svg>',
+  },
+  linkedin: {
+    label: 'LinkedIn',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M8.2 10.5v6M8.2 7.6v.1M11.8 16.5v-6M11.8 13.2c0-1.6 1-2.7 2.3-2.7s2 .9 2 2.6v3.4"/></svg>',
+  },
+}
+
+const OTHER_SOCIAL_NETWORK_ICON: string =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>'
+
+/**
+ * Nom affiché et icône d'un réseau social, avec une icône de lien pour un réseau que la template ne connaît pas.
+ * @param network Réseau en minuscules (« facebook », « instagram »…)
+ * @returns Le nom du réseau pour les lecteurs d'écran et son icône SVG
+ */
+function socialNetworkDisplay(network: string): SocialNetworkDisplay {
+  return (
+    SOCIAL_NETWORK_DISPLAYS[network] ?? {
+      label: network.charAt(0).toUpperCase() + network.slice(1),
+      icon: OTHER_SOCIAL_NETWORK_ICON,
+    }
+  )
+}
 
 const isCityShown: ComputedRef<boolean> = computed((): boolean => {
   const city: string = props.page.city.trim()
@@ -156,6 +223,38 @@ function copyrightLine(businessName: string): string {
   color: var(--pit-red);
 }
 
+.pit-footer__social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1.1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pit-footer__social-link {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid color-mix(in srgb, var(--pit-ink) 22%, transparent);
+  border-radius: 999px;
+  color: var(--pit-ink);
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.pit-footer__social-link:hover {
+  border-color: var(--pit-red);
+  color: var(--pit-red);
+}
+
+.pit-footer__social-link :deep(svg) {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
 .pit-footer__links,
 .pit-footer__hours {
   list-style: none;
@@ -177,8 +276,9 @@ function copyrightLine(businessName: string): string {
 
 .pit-footer__hours li {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.15rem 1rem;
   color: var(--pit-muted);
   font-size: 0.92rem;
   padding-bottom: 0.35rem;

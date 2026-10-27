@@ -51,6 +51,7 @@
         :heading="page.servicesHeading"
         :services="page.services" />
       <WhySection
+        v-bind="editableAttrs(props.content._editable?.strengths)"
         :heading="page.whyHeading"
         :items="page.whyItems" />
       <AboutSection
@@ -66,7 +67,8 @@
         v-if="page.gallery.length"
         v-bind="editableAttrs(props.content._editable?.gallery)"
         :heading="page.galleryHeading"
-        :items="page.gallery" />
+        :items="page.gallery"
+        :instagram-url="instagramProfileUrl" />
       <ProcessSection
         :heading="page.processHeading"
         :items="page.processItems" />
@@ -133,7 +135,7 @@ import type { ComputedRef, PropType, Ref } from 'vue'
 import type { SiteContent } from '~/types/SiteContent'
 import { editableAttrs } from '@devleadhunter/website-content'
 import { buildPitlaneContent } from '~/types/pitlane'
-import type { PitlanePageContent } from '~/types/pitlane'
+import type { PitlanePageContent, PitlaneSocialLink } from '~/types/pitlane'
 import HeroSection from './sections/HeroSection.vue'
 import TrustSection from './sections/TrustSection.vue'
 import ServicesSection from './sections/ServicesSection.vue'
@@ -162,6 +164,12 @@ const showMobileBar: Ref<boolean> = ref(false)
 
 const page: ComputedRef<PitlanePageContent> = computed((): PitlanePageContent =>
   buildPitlaneContent(props.content),
+)
+
+const instagramProfileUrl: ComputedRef<string> = computed(
+  (): string =>
+    page.value.socialLinks.find((link: PitlaneSocialLink): boolean => link.network === 'instagram')
+      ?.url ?? '',
 )
 
 const themeVars: ComputedRef<Record<string, string>> = computed((): Record<string, string> => ({

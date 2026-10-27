@@ -25,6 +25,16 @@
             @error="onBroken(index)" />
         </button>
       </div>
+
+      <a
+        v-if="instagramUrl"
+        :href="instagramUrl"
+        target="_blank"
+        rel="noopener"
+        class="pit-btn pit-btn--ghost pit-gallery__instagram"
+        data-pit-reveal
+        >Nos travaux sur Instagram</a
+      >
     </div>
 
     <Teleport to="body">
@@ -69,6 +79,10 @@ const props = defineProps({
   items: {
     type: Array as PropType<PitlaneGalleryItem[]>,
     required: true,
+  },
+  instagramUrl: {
+    type: String,
+    default: '',
   },
 })
 
@@ -155,6 +169,7 @@ onUnmounted((): void => {
 
 .pit-gallery__item img {
   width: 100%;
+  height: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
   display: block;
@@ -167,6 +182,44 @@ onUnmounted((): void => {
 .pit-gallery__item:hover img {
   transform: scale(1.04);
   filter: grayscale(0) contrast(1.05);
+}
+
+.pit-gallery__item:last-child:nth-child(odd) {
+  grid-column: span 2;
+}
+
+.pit-gallery__item:last-child:nth-child(odd) img {
+  aspect-ratio: 8 / 3;
+}
+
+@media (min-width: 900px) {
+  .pit-gallery__item:last-child:nth-child(odd) {
+    grid-column: auto;
+  }
+
+  .pit-gallery__item:last-child:nth-child(odd) img {
+    aspect-ratio: 4 / 3;
+  }
+
+  .pit-gallery__item:last-child:nth-child(3n + 2) {
+    grid-column: span 2;
+  }
+
+  .pit-gallery__item:last-child:nth-child(3n + 2) img {
+    aspect-ratio: 8 / 3;
+  }
+
+  .pit-gallery__item:last-child:nth-child(3n + 1) {
+    grid-column: span 3;
+  }
+
+  .pit-gallery__item:last-child:nth-child(3n + 1) img {
+    aspect-ratio: 4 / 1;
+  }
+}
+
+.pit-gallery__instagram {
+  margin-top: 2rem;
 }
 
 .pit-lightbox {
