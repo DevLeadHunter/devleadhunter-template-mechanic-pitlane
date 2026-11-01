@@ -6,14 +6,7 @@
       <div data-pit-reveal>
         <p class="pit-eyebrow">Contact</p>
         <h2 class="pit-heading">{{ page.contactHeading }}</h2>
-        <p class="pit-lead pit-contact__lead">
-          {{
-            regionalLabel(
-              page,
-              "Un entretien, un devis, une panne ? Appelez l'atelier ou écrivez : on vous répond rapidement.",
-            )
-          }}
-        </p>
+        <p class="pit-lead pit-contact__lead">{{ page.contactLead }}</p>
 
         <div class="pit-contact__actions">
           <a
@@ -47,7 +40,6 @@
 <script lang="ts" setup>
 import type { PropType } from 'vue'
 import type { PitlanePageContent } from '~/types/pitlane'
-import { regionalLabel } from '@devleadhunter/website-content'
 
 defineProps({
   page: {

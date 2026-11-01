@@ -49,6 +49,7 @@
       <ServicesSection
         v-bind="editableAttrs(props.content._editable?.services)"
         :heading="page.servicesHeading"
+        :lead="page.servicesLead"
         :services="page.services" />
       <WhySection
         v-bind="editableAttrs(props.content._editable?.strengths)"
@@ -78,6 +79,8 @@
         :heading="page.reviewsHeading"
         :reviews="page.reviews" />
       <AppointmentSection
+        :heading="page.ctaTitle"
+        :lead="page.ctaLead"
         :phone="page.phone"
         :email="page.email"
         :city="page.city"

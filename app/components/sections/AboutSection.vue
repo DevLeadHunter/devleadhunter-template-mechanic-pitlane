@@ -123,7 +123,7 @@
           class="pit-about__photo pit-about__photo--top">
           <img
             :src="image"
-            :alt="city ? `Atelier à ${city}` : 'Atelier'"
+            :alt="city ? `Atelier ${prefixCityWithPreposition(city)}` : 'Atelier'"
             referrerpolicy="no-referrer"
             @error="onImgError" />
         </figure>
@@ -206,6 +206,7 @@
 
 <script lang="ts" setup>
 import type { ComputedRef } from 'vue'
+import { prefixCityWithPreposition } from '~/types/pitlane'
 
 const props = defineProps({
   heading: {

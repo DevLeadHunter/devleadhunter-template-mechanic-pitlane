@@ -4,7 +4,7 @@
  * DA asphalt sombre / rouge racing inspirée d'AutoWorks. La template rend un
  * `SiteContent` typé et possède sa copie éditoriale (défauts métier garage).
  */
-import type { SiteContent } from '~/types/SiteContent'
+import type { SiteContent, SiteContentStep } from '~/types/SiteContent'
 import { professionalLicenseLine, regionalLabel } from '@devleadhunter/website-content'
 
 export interface PitlaneTheme {
@@ -72,6 +72,7 @@ export interface PitlanePageContent {
   businessName: string
   logo: string
   badge: string
+  heroTitle: string
   subtitle: string
   city: string
   area: string
@@ -87,6 +88,7 @@ export interface PitlanePageContent {
   ctaQuoteLabel: string
   trustItems: PitlaneTrustItem[]
   servicesHeading: string
+  servicesLead: string
   services: PitlaneServiceItem[]
   whyHeading: string
   whyItems: PitlaneWhyItem[]
@@ -100,7 +102,10 @@ export interface PitlanePageContent {
   faqHeading: string
   faq: PitlaneFaqItem[]
   faqImage: string
+  ctaTitle: string
+  ctaLead: string
   contactHeading: string
+  contactLead: string
   openingHours: PitlaneHoursItem[]
   zones: string[]
   socialLinks: PitlaneSocialLink[]
@@ -229,6 +234,7 @@ const defaults = {
     },
   ] as PitlaneFaqItem[],
   contactHeading: 'Prendre rendez-vous',
+  contactLead: "Un entretien, un devis, une panne ? Appelez l'atelier ou écrivez-nous.",
   images: {
     hero: 'https://images.unsplash.com/photo-1658244535411-92c887137240?auto=format&fit=crop&w=1600&q=80',
     about:
@@ -269,6 +275,26 @@ const defaults = {
  */
 function resolveText(value: string | undefined, fallback: string): string {
   return typeof value === 'string' && value.trim().length > 0 ? value : fallback
+}
+
+const LEADING_ARTICLE_LE: RegExp = /^le\s+/i
+const LEADING_ARTICLE_LES: RegExp = /^les\s+/i
+
+/**
+ * Fait précéder la ville de « à », contracté devant « Le » et « Les » : « au Locle », « aux Breuleux », « à La Chaux-de-Fonds ».
+ * @param city Nom de la ville, article compris
+ * @returns La ville précédée de sa préposition
+ */
+export function prefixCityWithPreposition(city: string): string {
+  const trimmedCity: string = city.trim()
+
+  if (LEADING_ARTICLE_LES.test(trimmedCity)) {
+    return `aux ${trimmedCity.replace(LEADING_ARTICLE_LES, '')}`
+  }
+  if (LEADING_ARTICLE_LE.test(trimmedCity)) {
+    return `au ${trimmedCity.replace(LEADING_ARTICLE_LE, '')}`
+  }
+  return `à ${trimmedCity}`
 }
 
 const WEEKDAYS: string[] = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche']
@@ -431,6 +457,16 @@ export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageCo
         .filter((strength): boolean => strength.title.length > 0)
     : []
 
+  const stepsFromContent: PitlaneProcessItem[] = Array.isArray(content.steps)
+    ? content.steps
+        .filter((step: SiteContentStep): boolean => (step.title?.trim() ?? '').length > 0)
+        .map((step: SiteContentStep, index: number): PitlaneProcessItem => ({
+          step: String(index + 1).padStart(2, '0'),
+          title: step.title?.trim() ?? '',
+          description: step.description?.trim() ?? '',
+        }))
+    : []
+
   const socialLinks: PitlaneSocialLink[] = Array.isArray(content.social)
     ? content.social
         .map((link): PitlaneSocialLink => ({
@@ -458,6 +494,7 @@ export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageCo
     businessName: content.businessName ?? '',
     logo: typeof content.logo === 'string' ? content.logo.trim() : '',
     badge: resolveText(content.heroBadge, defaults.badge),
+    heroTitle: typeof content.heroTitle === 'string' ? content.heroTitle.trim() : '',
     subtitle: resolveText(content.subtitle, regionalLabel(content, defaults.subtitle)),
     city: content.city ?? '',
     area: content.area ?? '',
@@ -481,6 +518,7 @@ export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageCo
     ctaQuoteLabel: resolveText(content.ctaQuoteLabel, defaults.ctaQuoteLabel),
     trustItems: trustFromContent.length ? trustFromContent : [...defaults.trustItems],
     servicesHeading: resolveText(content.servicesHeading, defaults.servicesHeading),
+    servicesLead: typeof content.servicesLead === 'string' ? content.servicesLead.trim() : '',
     services,
     whyHeading: resolveText(content.strengthsHeading, defaults.whyHeading),
     whyItems: strengthsFromContent.length
@@ -493,11 +531,13 @@ export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageCo
     galleryHeading: resolveText(content.galleryHeading, defaults.galleryHeading),
     gallery,
     processHeading: defaults.processHeading,
-    processItems: defaults.processItems.map((item: PitlaneProcessItem): PitlaneProcessItem => ({
-      step: item.step,
-      title: regionalLabel(content, item.title),
-      description: regionalLabel(content, item.description),
-    })),
+    processItems: stepsFromContent.length
+      ? stepsFromContent
+      : defaults.processItems.map((item: PitlaneProcessItem): PitlaneProcessItem => ({
+          step: item.step,
+          title: regionalLabel(content, item.title),
+          description: regionalLabel(content, item.description),
+        })),
     reviewsHeading: resolveText(content.reviewsHeading, defaults.reviewsHeading),
     reviews,
     faqHeading: resolveText(content.faqHeading, defaults.faqHeading),
@@ -510,7 +550,10 @@ export function buildPitlaneContent(content: PitlaneContentInput): PitlanePageCo
       gallery[0]?.url ||
       content.heroImage ||
       '',
+    ctaTitle: typeof content.ctaTitle === 'string' ? content.ctaTitle.trim() : '',
+    ctaLead: typeof content.ctaLead === 'string' ? content.ctaLead.trim() : '',
     contactHeading: resolveText(content.contactHeading, defaults.contactHeading),
+    contactLead: resolveText(content.contactLead, regionalLabel(content, defaults.contactLead)),
     openingHours,
     zones,
     socialLinks,

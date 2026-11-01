@@ -9,6 +9,11 @@
         <div class="pit-services__titles">
           <p class="pit-eyebrow">Ce que nous proposons</p>
           <h2 class="pit-heading">{{ heading }}</h2>
+          <p
+            v-if="lead"
+            class="pit-lead">
+            {{ lead }}
+          </p>
         </div>
         <a
           href="#rdv"
@@ -57,6 +62,10 @@ const props = defineProps({
   heading: {
     type: String,
     required: true,
+  },
+  lead: {
+    type: String,
+    default: '',
   },
   services: {
     type: Array as PropType<PitlaneServiceItem[]>,

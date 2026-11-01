@@ -13,9 +13,12 @@
           class="pit-hero__title"
           data-pit-intro
           :style="{ '--pit-delay': '80ms' }">
-          Votre garage
-          <span class="pit-hero__accent">de confiance</span>
-          <template v-if="page.city"> à {{ page.city }}</template>
+          <template v-if="page.heroTitle">{{ page.heroTitle }}</template>
+          <template v-else>
+            Votre garage
+            <span class="pit-hero__accent">de confiance</span>
+            <template v-if="page.city"> {{ prefixCityWithPreposition(page.city) }}</template>
+          </template>
         </h1>
 
         <p
@@ -109,6 +112,7 @@
 <script lang="ts" setup>
 import type { PropType } from 'vue'
 import type { PitlanePageContent } from '~/types/pitlane'
+import { prefixCityWithPreposition } from '~/types/pitlane'
 
 defineProps({
   page: {

@@ -6,8 +6,19 @@
       <div
         class="pit-book__head"
         data-pit-reveal>
-        <p class="pit-eyebrow">Prendre un</p>
-        <h2 class="pit-heading">Rendez-vous</h2>
+        <template v-if="heading">
+          <p class="pit-eyebrow">Contact</p>
+          <h2 class="pit-heading">{{ heading }}</h2>
+        </template>
+        <template v-else>
+          <p class="pit-eyebrow">Prendre un</p>
+          <h2 class="pit-heading">Rendez-vous</h2>
+        </template>
+        <p
+          v-if="lead"
+          class="pit-lead">
+          {{ lead }}
+        </p>
       </div>
 
       <form
@@ -161,6 +172,14 @@ import type { ComputedRef, PropType, Ref } from 'vue'
 import { regionalLabel } from '@devleadhunter/website-content'
 
 const props = defineProps({
+  heading: {
+    type: String,
+    default: '',
+  },
+  lead: {
+    type: String,
+    default: '',
+  },
   phone: {
     type: String,
     default: '',
