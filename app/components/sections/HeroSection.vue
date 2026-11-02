@@ -17,7 +17,7 @@
           <template v-else>
             Votre garage
             <span class="pit-hero__accent">de confiance</span>
-            <template v-if="page.city"> {{ prefixCityWithPreposition(page.city) }}</template>
+            <template v-if="page.city">{{ ' ' + prefixCityWithPreposition(page.city) }}</template>
           </template>
         </h1>
 
